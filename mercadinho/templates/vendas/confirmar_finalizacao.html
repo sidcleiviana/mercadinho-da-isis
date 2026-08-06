@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Finalizar Venda | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Venda</p>
+    <h1>Finalizar Venda</h1>
+    <p>Confirme para atualizar estoque e caixa.</p>
+</section>
+
+<form class="form-panel" method="post">
+    {% csrf_token %}
+    <p>Total da venda: <strong>R$ {{ venda.valor_total }}</strong></p>
+    <div class="form-actions">
+        <button class="button button-primary" type="submit">Confirmar</button>
+        <a class="button button-secondary" href="{% url 'vendas:atendimento' venda.pk %}">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

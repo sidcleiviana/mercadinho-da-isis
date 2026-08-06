@@ -1,0 +1,50 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Mercadinho da Ísis{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <span class="brand-mark" aria-hidden="true">MI</span>
+            <div>
+                <strong>Mercadinho da Ísis</strong>
+                <span>Operacao do mercado</span>
+            </div>
+        </div>
+        <div class="topbar-meta">
+            <span>Sistema inicial</span>
+            {% if request.user.is_authenticated %}
+                <span>{{ request.user.get_username }}</span>
+            {% else %}
+                <a href="{% url 'admin:login' %}">Entrar</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="app-shell">
+        <nav class="sidebar" aria-label="Menu principal">
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'core' %}active{% endif %}" href="{% url 'core:dashboard' %}"><span class="nav-icon" aria-hidden="true">D</span>Dashboard</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'produtos' %}active{% endif %}" href="{% url 'produtos:lista' %}"><span class="nav-icon" aria-hidden="true">P</span>Produtos</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'estoque' %}active{% endif %}" href="{% url 'estoque:lista' %}"><span class="nav-icon" aria-hidden="true">E</span>Estoque</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'caixa' %}active{% endif %}" href="{% url 'caixa:dashboard' %}"><span class="nav-icon" aria-hidden="true">C</span>Caixa</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'vendas' %}active{% endif %}" href="{% url 'vendas:lista' %}"><span class="nav-icon" aria-hidden="true">V</span>Vendas</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'clientes' %}active{% endif %}" href="{% url 'clientes:fluxo' %}"><span class="nav-icon" aria-hidden="true">A</span>Atendimento</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'relatorios' %}active{% endif %}" href="{% url 'relatorios:resumo' %}"><span class="nav-icon" aria-hidden="true">R</span>Relatorios</a>
+            <span class="sidebar-link disabled"><span class="nav-icon" aria-hidden="true">S</span>Configuracoes</span>
+        </nav>
+
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <footer class="statusbar">
+        <span>Etapa 12: interface</span>
+    </footer>
+</body>
+</html>

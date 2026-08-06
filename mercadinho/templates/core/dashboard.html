@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header page-header-actions">
+    <div>
+        <p class="eyebrow">Dashboard</p>
+        <h1>Mercadinho da Ísis</h1>
+        <p>Estado atual do mercado.</p>
+    </div>
+
+    {% if expediente.status == "aberto" %}
+        <form method="post" action="{% url 'core:fechar_expediente' %}">
+            {% csrf_token %}
+            <button class="button button-secondary" type="submit">Encerrar Expediente</button>
+        </form>
+    {% else %}
+        <form method="post" action="{% url 'core:abrir_expediente' %}">
+            {% csrf_token %}
+            <button class="button button-primary" type="submit">Iniciar Expediente</button>
+        </form>
+    {% endif %}
+</section>
+
+{% if messages %}
+    <div class="message-list" aria-live="polite">
+        {% for message in messages %}
+            <p class="message message-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<section class="dashboard-grid" aria-label="Estado atual do sistema">
+    <article class="summary-card">
+        <span class="summary-label">Expediente</span>
+        <strong>{{ expediente.get_status_display }}</strong>
+    </article>
+
+    <article class="summary-card">
+        <span class="summary-label">Caixa atual</span>
+        <strong>R$ {{ caixa.saldo_atual }}</strong>
+    </article>
+
+    <article class="summary-card">
+        <span class="summary-label">Produtos ativos</span>
+        <strong>{{ produtos_ativos }}</strong>
+    </article>
+
+    <article class="summary-card">
+        <span class="summary-label">Produtos em estoque</span>
+        <strong>{{ total_estoque }}</strong>
+    </article>
+
+    <article class="summary-card">
+        <span class="summary-label">Clientes aguardando</span>
+        <strong>{{ clientes_aguardando }}</strong>
+    </article>
+</section>
+
+<section class="dashboard-panels">
+    <article class="dashboard-panel">
+        <h2>Ultima venda</h2>
+        {% if ultima_venda %}
+            <p><strong>{{ ultima_venda.numero_venda }}</strong></p>
+            <p>{{ ultima_venda.data|date:"d/m/Y H:i" }}</p>
+            <p>R$ {{ ultima_venda.valor_total }}</p>
+        {% else %}
+            <p class="panel-empty">Nenhuma venda concluida.</p>
+        {% endif %}
+    </article>
+
+    <article class="dashboard-panel">
+        <h2>Notificacoes</h2>
+        {% if notificacoes %}
+            <ul class="notification-list">
+                {% for notificacao in notificacoes %}
+                    <li>{{ notificacao }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="panel-empty">Nenhuma notificacao.</p>
+        {% endif %}
+    </article>
+
+    <article class="dashboard-panel">
+        <h2>Eventos de clientes</h2>
+        {% if eventos_clientes %}
+            <ul class="notification-list">
+                {% for evento in eventos_clientes %}
+                    <li>{{ evento.data|date:"H:i" }} - {{ evento.mensagem }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="panel-empty">Nenhum evento registrado.</p>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

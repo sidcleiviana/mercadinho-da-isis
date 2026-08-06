@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Relatorio de Clientes | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Relatorios</p>
+    <h1>Clientes</h1>
+    <p>Fluxo dos clientes virtuais no dia atual.</p>
+</section>
+
+{% include "relatorios/_nav.html" %}
+
+<section class="dashboard-grid">
+    <article class="summary-card">
+        <span class="summary-label">Atendidos</span>
+        <strong>{{ relatorio.clientes_atendidos }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Desistentes</span>
+        <strong>{{ relatorio.clientes_desistentes }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Tempo medio</span>
+        <strong>{% if relatorio.tempo_medio_atendimento %}{{ relatorio.tempo_medio_atendimento }}{% else %}-{% endif %}</strong>
+    </article>
+</section>
+
+<section class="dashboard-panel compact-header">
+    <h2>Fluxo de clientes</h2>
+    {% if relatorio.fluxo_clientes %}
+        <div class="table-panel table-panel-plain">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Status</th>
+                        <th>Chegada</th>
+                        <th>Inicio</th>
+                        <th>Fim</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for atendimento in relatorio.fluxo_clientes %}
+                        <tr>
+                            <td>{{ atendimento.cliente_virtual.nome }}</td>
+                            <td>{{ atendimento.get_status_display }}</td>
+                            <td>{{ atendimento.horario_programado|date:"H:i" }}</td>
+                            <td>{{ atendimento.horario_inicio|date:"H:i" }}</td>
+                            <td>{{ atendimento.horario_finalizacao|date:"H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="panel-empty">Nenhum cliente registrado hoje.</p>
+    {% endif %}
+</section>
+{% endblock %}

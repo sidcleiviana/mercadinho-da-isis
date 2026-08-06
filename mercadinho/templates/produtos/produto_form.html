@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Editar Produto{% else %}Novo Produto{% endif %} | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Produtos</p>
+    <h1>{% if object %}Editar Produto{% else %}Novo Produto{% endif %}</h1>
+    <p>Preencha os dados do produto com foto, categoria, codigo de barras e preco.</p>
+</section>
+
+<form class="form-panel" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="form-errors">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <div class="form-grid">
+        <div class="form-field form-field-wide">
+            <label for="{{ form.foto.id_for_label }}">{{ form.foto.label }}</label>
+            {% if object and object.foto %}
+                <img class="form-image-preview" src="{{ object.foto.url }}" alt="Foto atual de {{ object.nome }}">
+            {% endif %}
+            {{ form.foto }}
+            {% for error in form.foto.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.nome.id_for_label }}">{{ form.nome.label }}</label>
+            {{ form.nome }}
+            {% for error in form.nome.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.categoria.id_for_label }}">{{ form.categoria.label }}</label>
+            {{ form.categoria }}
+            {% for error in form.categoria.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.codigo_barras.id_for_label }}">{{ form.codigo_barras.label }}</label>
+            {{ form.codigo_barras }}
+            {% for error in form.codigo_barras.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.preco_venda.id_for_label }}">{{ form.preco_venda.label }}</label>
+            {{ form.preco_venda }}
+            {% for error in form.preco_venda.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="form-field checkbox-field">
+            <label for="{{ form.ativo.id_for_label }}">
+                {{ form.ativo }}
+                <span>{{ form.ativo.label }}</span>
+            </label>
+            {% for error in form.ativo.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button class="button button-primary" type="submit">Salvar</button>
+        <a class="button button-secondary" href="{% url 'produtos:lista' %}">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

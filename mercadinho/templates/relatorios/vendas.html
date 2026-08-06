@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Relatorio de Vendas | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Relatorios</p>
+    <h1>Vendas</h1>
+    <p>Vendas concluidas no dia atual.</p>
+</section>
+
+{% include "relatorios/_nav.html" %}
+
+<section class="dashboard-grid">
+    <article class="summary-card">
+        <span class="summary-label">Total de vendas</span>
+        <strong>{{ relatorio.total_vendas }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Valor total vendido</span>
+        <strong>R$ {{ relatorio.valor_total }}</strong>
+    </article>
+</section>
+
+<section class="dashboard-panels">
+    <article class="dashboard-panel">
+        <h2>Produtos mais vendidos</h2>
+        {% if relatorio.produtos_mais_vendidos %}
+            <div class="table-panel table-panel-plain">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Quantidade</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produto in relatorio.produtos_mais_vendidos %}
+                            <tr>
+                                <td>{{ produto.produto__nome }}</td>
+                                <td>{{ produto.quantidade_total }}</td>
+                                <td>R$ {{ produto.valor_total }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="panel-empty">Nenhum produto vendido no periodo.</p>
+        {% endif %}
+    </article>
+    <article class="dashboard-panel">
+        <h2>Vendas recentes</h2>
+        {% if relatorio.vendas %}
+            <ul class="notification-list">
+                {% for venda in relatorio.vendas %}
+                    <li>{{ venda.numero_venda }} - R$ {{ venda.valor_total }} - {{ venda.data|date:"H:i" }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="panel-empty">Nenhuma venda concluida.</p>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

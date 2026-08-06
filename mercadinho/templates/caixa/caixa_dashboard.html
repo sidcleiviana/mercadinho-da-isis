@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Caixa | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header page-header-actions">
+    <div>
+        <p class="eyebrow">Caixa</p>
+        <h1>Caixa</h1>
+        <p>Controle do dinheiro disponivel no mercadinho.</p>
+    </div>
+    <div class="action-row">
+        <a class="button button-primary" href="{% url 'caixa:entrada' %}">Registrar Entrada</a>
+        <a class="button button-secondary" href="{% url 'caixa:saida' %}">Registrar Saida</a>
+    </div>
+</section>
+
+{% if messages %}
+    <div class="message-list" aria-live="polite">
+        {% for message in messages %}
+            <p class="message message-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<section class="cash-balance-card">
+    <span>Saldo Atual</span>
+    <strong>R$ {{ caixa.saldo_atual }}</strong>
+</section>
+
+<section class="cash-columns">
+    <article class="cash-panel">
+        <h2>Entradas</h2>
+        {% if entradas %}
+            <div class="cash-list">
+                {% for movimentacao in entradas %}
+                    <div class="cash-row cash-row-entry">
+                        <div>
+                            <strong>{{ movimentacao.descricao }}</strong>
+                            <span>{{ movimentacao.data|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        <span>+ R$ {{ movimentacao.valor }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="panel-empty">Nenhuma entrada registrada.</p>
+        {% endif %}
+    </article>
+
+    <article class="cash-panel">
+        <h2>Saidas</h2>
+        {% if saidas %}
+            <div class="cash-list">
+                {% for movimentacao in saidas %}
+                    <div class="cash-row cash-row-exit">
+                        <div>
+                            <strong>{{ movimentacao.descricao }}</strong>
+                            <span>{{ movimentacao.data|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        <span>- R$ {{ movimentacao.valor }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="panel-empty">Nenhuma saida registrada.</p>
+        {% endif %}
+    </article>
+</section>
+
+<section class="page-header compact-header">
+    <p class="eyebrow">Auditoria</p>
+    <h2>Historico Completo</h2>
+</section>
+
+{% if movimentacoes %}
+    <div class="table-panel">
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Tipo</th>
+                    <th>Descricao</th>
+                    <th>Valor</th>
+                    <th>Referencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movimentacao in movimentacoes %}
+                    <tr>
+                        <td>{{ movimentacao.data|date:"d/m/Y H:i" }}</td>
+                        <td>{{ movimentacao.get_tipo_display }}</td>
+                        <td>{{ movimentacao.descricao }}</td>
+                        <td>
+                            {% if movimentacao.tipo == "entrada" %}+{% else %}-{% endif %}
+                            R$ {{ movimentacao.valor }}
+                        </td>
+                        <td>{% if movimentacao.venda %}Venda {{ movimentacao.venda.numero_venda }}{% else %}-{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <section class="empty-state">
+        <h2>Nenhuma movimentacao registrada</h2>
+        <p>Entradas e saidas aparecerao aqui.</p>
+    </section>
+{% endif %}
+{% endblock %}

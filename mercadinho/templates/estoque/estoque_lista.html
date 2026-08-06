@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Estoque | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header page-header-actions">
+    <div>
+        <p class="eyebrow">Estoque</p>
+        <h1>Estoque</h1>
+        <p>Consulte a quantidade disponivel e registre entradas de produtos.</p>
+    </div>
+    <a class="button button-secondary" href="{% url 'estoque:historico' %}">Historico</a>
+</section>
+
+{% if messages %}
+    <div class="message-list" aria-live="polite">
+        {% for message in messages %}
+            <p class="message message-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<form class="search-form" method="get">
+    <label for="busca">Pesquisar</label>
+    <div class="search-row">
+        <input id="busca" name="q" type="search" value="{{ termo_busca }}" placeholder="Nome ou codigo de barras">
+        <button class="button button-secondary" type="submit">Buscar</button>
+        {% if termo_busca %}
+            <a class="button button-quiet" href="{% url 'estoque:lista' %}">Limpar</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if estoques %}
+    <section class="inventory-list" aria-label="Lista de estoque">
+        {% for estoque in estoques %}
+            <article class="inventory-card">
+                <img class="inventory-image" src="{{ estoque.produto.foto.url }}" alt="Foto de {{ estoque.produto.nome }}">
+                <div class="inventory-info">
+                    <h2>{{ estoque.produto.nome }}</h2>
+                    <p>{{ estoque.produto.categoria.nome }}</p>
+                    <p>{{ estoque.produto.codigo_barras }}</p>
+                </div>
+                <div class="inventory-quantity">
+                    <span>Quantidade</span>
+                    <strong>{{ estoque.quantidade_atual }}</strong>
+                </div>
+                <a class="button button-primary" href="{% url 'estoque:entrada' estoque.produto.pk %}">Adicionar Estoque</a>
+            </article>
+        {% endfor %}
+    </section>
+
+    {% if is_paginated %}
+        <nav class="pagination" aria-label="Paginacao">
+            {% if page_obj.has_previous %}
+                <a class="button button-secondary" href="?q={{ termo_busca }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+            <span>Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a class="button button-secondary" href="?q={{ termo_busca }}&page={{ page_obj.next_page_number }}">Proxima</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% else %}
+    <section class="empty-state">
+        <h2>Nenhum produto em estoque</h2>
+        <p>Cadastre produtos antes de registrar entradas de estoque.</p>
+    </section>
+{% endif %}
+{% endblock %}

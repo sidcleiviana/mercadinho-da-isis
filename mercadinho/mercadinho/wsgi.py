@@ -1,0 +1,8 @@
+"""WSGI config for Mercadinho da Isis."""
+import os
+
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mercadinho.settings")
+
+application = get_wsgi_application()

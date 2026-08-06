@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Atendimento | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header page-header-actions">
+    <div>
+        <p class="eyebrow">Central de Atendimento</p>
+        <h1>Fila de Clientes</h1>
+        <p>Expediente: {{ expediente.get_status_display }}. Os clientes aparecem durante o funcionamento do mercado.</p>
+    </div>
+    {% if atendimento_atual and atendimento_atual.venda %}
+        <a class="button button-primary" href="{% url 'vendas:atendimento' atendimento_atual.venda.pk %}">Continuar Atendimento</a>
+    {% endif %}
+</section>
+
+{% if messages %}
+    <div class="message-list" aria-live="polite">
+        {% for message in messages %}
+            <p class="message message-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<section class="dashboard-grid" aria-label="Resumo do fluxo de clientes">
+    <article class="summary-card">
+        <span class="summary-label">Clientes previstos hoje</span>
+        <strong>{{ clientes_previstos }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Clientes restantes</span>
+        <strong>{{ clientes_restantes }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Atendidos hoje</span>
+        <strong>{{ clientes_atendidos }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Desistentes hoje</span>
+        <strong>{{ clientes_desistentes }}</strong>
+    </article>
+</section>
+
+<section class="dashboard-panels">
+    <article class="dashboard-panel">
+        <h2>Atendimento atual</h2>
+        {% if atendimento_atual %}
+            <div class="queue-card">
+                <div>
+                    <strong>{{ atendimento_atual.cliente_virtual.nome }}</strong>
+                    <span>Inicio: {{ atendimento_atual.horario_inicio|date:"H:i" }}</span>
+                </div>
+                <span class="queue-status">{{ atendimento_atual.get_status_display }}</span>
+            </div>
+            <div class="action-row action-row-spaced">
+                <a class="button button-primary" href="{% url 'vendas:atendimento' atendimento_atual.venda.pk %}">Ir para venda</a>
+                <form method="post" action="{% url 'clientes:cancelar' atendimento_atual.pk %}">
+                    {% csrf_token %}
+                    <button class="button button-secondary" type="submit">Cancelar atendimento</button>
+                </form>
+            </div>
+        {% else %}
+            <p class="panel-empty">Nenhum atendimento em andamento.</p>
+        {% endif %}
+    </article>
+
+    <article class="dashboard-panel">
+        <h2>Clientes aguardando</h2>
+        {% if fila %}
+            <div class="queue-list">
+                {% for atendimento in fila %}
+                    <article class="queue-card">
+                        <div>
+                            <strong>{{ atendimento.cliente_virtual.nome }}</strong>
+                            <span>Cliente aguardando atendimento</span>
+                        </div>
+                        {% if atendimento_atual %}
+                            <span class="queue-status">{{ atendimento.get_status_display }}</span>
+                        {% else %}
+                            <form method="post" action="{% url 'clientes:iniciar' atendimento.pk %}">
+                                {% csrf_token %}
+                                <button class="button button-primary" type="submit">Atender</button>
+                            </form>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="panel-empty">Nenhum cliente aguardando. O proximo cliente chegara sem aviso previo.</p>
+        {% endif %}
+    </article>
+
+    <article class="dashboard-panel">
+        <h2>Expediente</h2>
+        {% if tempo_expediente %}
+            <p>Tempo em funcionamento: {{ tempo_expediente }}</p>
+            <p>O sistema libera um cliente por vez conforme o movimento do mercado.</p>
+        {% else %}
+            <p class="panel-empty">Abra o expediente para iniciar o movimento de clientes.</p>
+        {% endif %}
+    </article>
+
+    <article class="dashboard-panel">
+        <h2>Eventos recentes</h2>
+        {% if eventos %}
+            <ul class="notification-list">
+                {% for evento in eventos %}
+                    <li>{{ evento.data|date:"H:i" }} - {{ evento.mensagem }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="panel-empty">Nenhum evento registrado.</p>
+        {% endif %}
+    </article>
+</section>
+
+<script>
+    window.setTimeout(function () {
+        window.location.reload();
+    }, 30000);
+</script>
+{% endblock %}

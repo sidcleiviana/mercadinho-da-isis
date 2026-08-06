@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Relatorios | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Relatorios</p>
+    <h1>Resumo Geral</h1>
+    <p>Indicadores calculados a partir dos registros do sistema.</p>
+</section>
+
+{% include "relatorios/_nav.html" %}
+
+<section class="dashboard-grid" aria-label="Resumo dos relatorios">
+    <article class="summary-card">
+        <span class="summary-label">Vendas do dia</span>
+        <strong>{{ vendas.total_vendas }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Valor vendido</span>
+        <strong>R$ {{ vendas.valor_total }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Saldo atual</span>
+        <strong>R$ {{ caixa.saldo_atual }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Estoque baixo</span>
+        <strong>{{ estoque.produtos_estoque_baixo|length }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Clientes atendidos</span>
+        <strong>{{ clientes.clientes_atendidos }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Clientes desistentes</span>
+        <strong>{{ clientes.clientes_desistentes }}</strong>
+    </article>
+</section>
+
+<section class="dashboard-panels">
+    <article class="dashboard-panel">
+        <h2>Produtos mais vendidos</h2>
+        {% if vendas.produtos_mais_vendidos %}
+            <ul class="notification-list">
+                {% for produto in vendas.produtos_mais_vendidos %}
+                    <li>{{ produto.produto__nome }} - {{ produto.quantidade_total }} un.</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="panel-empty">Nenhuma venda concluida hoje.</p>
+        {% endif %}
+    </article>
+    <article class="dashboard-panel">
+        <h2>Eventos relevantes</h2>
+        {% if eventos_relevantes %}
+            <ul class="notification-list">
+                {% for evento in eventos_relevantes %}
+                    <li>{{ evento.data|date:"d/m H:i" }} - {{ evento.mensagem }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="panel-empty">Nenhum evento registrado.</p>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

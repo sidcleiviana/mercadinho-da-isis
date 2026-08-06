@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Historico de Estoque | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header page-header-actions">
+    <div>
+        <p class="eyebrow">Estoque</p>
+        <h1>Historico de Movimentacoes</h1>
+        <p>Auditoria das alteracoes realizadas no estoque.</p>
+    </div>
+    <a class="button button-secondary" href="{% url 'estoque:lista' %}">Voltar ao Estoque</a>
+</section>
+
+<form class="search-form" method="get">
+    <label for="busca">Pesquisar</label>
+    <div class="search-row">
+        <input id="busca" name="q" type="search" value="{{ termo_busca }}" placeholder="Nome ou codigo de barras">
+        <button class="button button-secondary" type="submit">Buscar</button>
+        {% if termo_busca %}
+            <a class="button button-quiet" href="{% url 'estoque:historico' %}">Limpar</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if movimentacoes %}
+    <div class="table-panel">
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Produto</th>
+                    <th>Tipo</th>
+                    <th>Quantidade</th>
+                    <th>Observacao</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movimentacao in movimentacoes %}
+                    <tr>
+                        <td>{{ movimentacao.data|date:"d/m/Y H:i" }}</td>
+                        <td>{{ movimentacao.produto.nome }}</td>
+                        <td>{{ movimentacao.get_tipo_display }}</td>
+                        <td>{{ movimentacao.quantidade }}</td>
+                        <td>{{ movimentacao.observacao|default:"-" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+        <nav class="pagination" aria-label="Paginacao">
+            {% if page_obj.has_previous %}
+                <a class="button button-secondary" href="?q={{ termo_busca }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+            <span>Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a class="button button-secondary" href="?q={{ termo_busca }}&page={{ page_obj.next_page_number }}">Proxima</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% else %}
+    <section class="empty-state">
+        <h2>Nenhuma movimentacao registrada</h2>
+        <p>As entradas de estoque aparecerao aqui.</p>
+    </section>
+{% endif %}
+{% endblock %}

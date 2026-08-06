@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Produtos | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header page-header-actions">
+    <div>
+        <p class="eyebrow">Produtos</p>
+        <h1>Produtos</h1>
+        <p>Consulte produtos por nome ou codigo de barras.</p>
+    </div>
+    <a class="button button-primary" href="{% url 'produtos:criar' %}">Novo Produto</a>
+</section>
+
+{% if messages %}
+    <div class="message-list" aria-live="polite">
+        {% for message in messages %}
+            <p class="message message-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<form class="search-form" method="get">
+    <label for="busca">Pesquisar</label>
+    <div class="search-row">
+        <input id="busca" name="q" type="search" value="{{ termo_busca }}" placeholder="Nome ou codigo de barras">
+        <button class="button button-secondary" type="submit">Buscar</button>
+        {% if termo_busca %}
+            <a class="button button-quiet" href="{% url 'produtos:lista' %}">Limpar</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if produtos %}
+    <section class="product-grid" aria-label="Lista de produtos">
+        {% for produto in produtos %}
+            <article class="product-card">
+                <a class="product-image-link" href="{% url 'produtos:detalhe' produto.pk %}">
+                    <img class="product-image" src="{{ produto.foto.url }}" alt="Foto de {{ produto.nome }}">
+                </a>
+                <div class="product-card-body">
+                    <h2>{{ produto.nome }}</h2>
+                    <p class="product-price">R$ {{ produto.preco_venda }}</p>
+                    <p class="product-meta">{{ produto.categoria.nome }}</p>
+                    <p class="product-code">{{ produto.codigo_barras }}</p>
+                </div>
+                <div class="product-actions">
+                    <a class="button button-secondary" href="{% url 'produtos:detalhe' produto.pk %}">Ver</a>
+                    <a class="button button-primary" href="{% url 'produtos:editar' produto.pk %}">Editar</a>
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+
+    {% if is_paginated %}
+        <nav class="pagination" aria-label="Paginacao">
+            {% if page_obj.has_previous %}
+                <a class="button button-secondary" href="?q={{ termo_busca }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+            <span>Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a class="button button-secondary" href="?q={{ termo_busca }}&page={{ page_obj.next_page_number }}">Proxima</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% else %}
+    <section class="empty-state">
+        <h2>Nenhum produto encontrado</h2>
+        <p>Cadastre um produto ou ajuste a pesquisa.</p>
+    </section>
+{% endif %}
+{% endblock %}

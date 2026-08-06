@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Relatorio de Caixa | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Relatorios</p>
+    <h1>Caixa</h1>
+    <p>Resumo financeiro calculado pelas movimentacoes registradas.</p>
+</section>
+
+{% include "relatorios/_nav.html" %}
+
+<section class="dashboard-grid">
+    <article class="summary-card">
+        <span class="summary-label">Saldo atual</span>
+        <strong>R$ {{ relatorio.saldo_atual }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Entradas do dia</span>
+        <strong>R$ {{ relatorio.total_entradas }}</strong>
+    </article>
+    <article class="summary-card">
+        <span class="summary-label">Saidas do dia</span>
+        <strong>R$ {{ relatorio.total_saidas }}</strong>
+    </article>
+</section>
+
+<section class="dashboard-panel compact-header">
+    <h2>Movimentacoes recentes</h2>
+    {% if relatorio.movimentacoes_recentes %}
+        <div class="table-panel table-panel-plain">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>Descricao</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mov in relatorio.movimentacoes_recentes %}
+                        <tr>
+                            <td>{{ mov.data|date:"d/m/Y H:i" }}</td>
+                            <td>{{ mov.get_tipo_display }}</td>
+                            <td>{{ mov.descricao }}</td>
+                            <td>R$ {{ mov.valor }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="panel-empty">Nenhuma movimentacao registrada.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ produto.nome }} | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header page-header-actions">
+    <div>
+        <p class="eyebrow">Produto</p>
+        <h1>{{ produto.nome }}</h1>
+        <p>Detalhes do cadastro do produto.</p>
+    </div>
+    <a class="button button-primary" href="{% url 'produtos:editar' produto.pk %}">Editar</a>
+</section>
+
+<section class="detail-layout">
+    <div class="detail-image-panel">
+        <img class="detail-image" src="{{ produto.foto.url }}" alt="Foto de {{ produto.nome }}">
+    </div>
+
+    <dl class="detail-list">
+        <div>
+            <dt>Nome</dt>
+            <dd>{{ produto.nome }}</dd>
+        </div>
+        <div>
+            <dt>Categoria</dt>
+            <dd>{{ produto.categoria.nome }}</dd>
+        </div>
+        <div>
+            <dt>Codigo de barras</dt>
+            <dd>{{ produto.codigo_barras }}</dd>
+        </div>
+        <div>
+            <dt>Preco</dt>
+            <dd>R$ {{ produto.preco_venda }}</dd>
+        </div>
+        <div>
+            <dt>Status</dt>
+            <dd>{% if produto.ativo %}Ativo{% else %}Inativo{% endif %}</dd>
+        </div>
+    </dl>
+</section>
+
+<div class="form-actions">
+    <a class="button button-secondary" href="{% url 'produtos:lista' %}">Voltar</a>
+</div>
+{% endblock %}

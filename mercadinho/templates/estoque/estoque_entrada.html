@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Estoque | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Estoque</p>
+    <h1>Adicionar Estoque</h1>
+    <p>Registre a entrada manual de produtos fisicos no mercado.</p>
+</section>
+
+<section class="stock-entry-layout">
+    <article class="inventory-card inventory-card-fixed">
+        <img class="inventory-image" src="{{ produto.foto.url }}" alt="Foto de {{ produto.nome }}">
+        <div class="inventory-info">
+            <h2>{{ produto.nome }}</h2>
+            <p>{{ produto.categoria.nome }}</p>
+            <p>{{ produto.codigo_barras }}</p>
+        </div>
+        <div class="inventory-quantity">
+            <span>Quantidade atual</span>
+            <strong>{{ estoque.quantidade_atual }}</strong>
+        </div>
+    </article>
+
+    <form class="form-panel" method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-grid form-grid-single">
+            <div class="form-field">
+                <label for="{{ form.quantidade.id_for_label }}">{{ form.quantidade.label }}</label>
+                {{ form.quantidade }}
+                {% for error in form.quantidade.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="form-field">
+                <label for="{{ form.observacao.id_for_label }}">{{ form.observacao.label }}</label>
+                {{ form.observacao }}
+                {% for error in form.observacao.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button class="button button-primary" type="submit">Confirmar</button>
+            <a class="button button-secondary" href="{% url 'estoque:lista' %}">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

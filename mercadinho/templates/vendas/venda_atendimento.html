@@ -1,0 +1,155 @@
+{% extends "base_atendimento.html" %}
+
+{% block title %}Venda {{ venda.numero_venda }} | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header page-header-actions">
+    <div>
+        <p class="eyebrow">Modo Atendimento</p>
+        <h1>Venda {{ venda.numero_venda }}</h1>
+        {% if venda.atendimento_virtual %}
+            <p>Cliente: {{ venda.atendimento_virtual.cliente_virtual.nome }} | Status: {{ venda.atendimento_virtual.get_status_display }}</p>
+        {% else %}
+            <p>Status: {{ venda.get_status_display }}</p>
+        {% endif %}
+    </div>
+    <div class="action-row">
+        {% if venda.atendimento_virtual %}
+            <a class="button button-secondary" href="{% url 'clientes:fluxo' %}">Central</a>
+        {% else %}
+            <a class="button button-secondary" href="{% url 'vendas:lista' %}">Historico</a>
+        {% endif %}
+    </div>
+</section>
+
+{% if messages %}
+    <div class="message-list" aria-live="polite">
+        {% for message in messages %}
+            <p class="message message-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if venda.status == "em_andamento" %}
+    <form class="barcode-panel" method="post" action="{% url 'vendas:adicionar_item' venda.pk %}">
+        {% csrf_token %}
+        <label for="{{ form.codigo_barras.id_for_label }}">{{ form.codigo_barras.label }}</label>
+        <div class="search-row">
+            {{ form.codigo_barras }}
+            <button class="button button-primary" type="submit">Adicionar</button>
+        </div>
+    </form>
+{% endif %}
+
+{% if conversa %}
+    <section class="conversation-layout">
+        <article class="conversation-panel">
+            <h2>Conversa</h2>
+            <div class="conversation-list" aria-label="Historico da conversa">
+                {% for interacao in conversa.interacoes %}
+                    <p class="conversation-message conversation-message-{{ interacao.origem }}">
+                        <strong>{{ interacao.get_origem_display }}</strong>
+                        <span>{{ interacao.mensagem }}</span>
+                    </p>
+                {% endfor %}
+            </div>
+        </article>
+
+        <aside class="conversation-panel">
+            <h2>Pedido</h2>
+            {% if conversa.pedido %}
+                <p><strong>{{ conversa.pedido.produto.nome }}</strong></p>
+                <p>Quantidade: {{ conversa.pedido.quantidade }}</p>
+            {% else %}
+                <p class="panel-empty">Nenhum produto solicitado.</p>
+            {% endif %}
+            <p>Estado: {{ conversa.atendimento.get_estado_conversa_display }}</p>
+
+            {% if conversa.opcoes %}
+                <div class="conversation-actions">
+                    {% for opcao in conversa.opcoes %}
+                        <form method="post" action="{% url 'clientes:responder_conversa' conversa.atendimento.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="acao" value="{{ opcao }}">
+                            <button class="button {% if opcao == 'cancelar_atendimento' %}button-secondary{% else %}button-primary{% endif %}" type="submit">
+                                {% if opcao == "sim_temos" %}
+                                    Sim, temos
+                                {% elif opcao == "nao_temos" %}
+                                    Nao temos
+                                {% elif opcao == "ver_outros_produtos" %}
+                                    Ver outros produtos
+                                {% elif opcao == "finalizar_compra" %}
+                                    Finalizar compra
+                                {% else %}
+                                    Cancelar atendimento
+                                {% endif %}
+                            </button>
+                        </form>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </aside>
+    </section>
+{% endif %}
+
+<section class="sale-layout">
+    <div class="sale-items-panel">
+        <h2>Produtos Registrados</h2>
+        {% if venda.itens.all %}
+            <div class="table-panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Quantidade</th>
+                            <th>Unitario</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in venda.itens.all %}
+                            <tr>
+                                <td>{{ item.produto.nome }}</td>
+                                <td>{{ item.quantidade }}</td>
+                                <td>R$ {{ item.valor_unitario }}</td>
+                                <td>R$ {{ item.valor_total }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <section class="empty-state">
+                <h2>Nenhum produto registrado</h2>
+                <p>Leia o codigo de barras para adicionar produtos.</p>
+            </section>
+        {% endif %}
+    </div>
+
+    <aside class="sale-total-panel">
+        <span>Total</span>
+        <strong>R$ {{ venda.valor_total }}</strong>
+        {% if venda.status == "em_andamento" %}
+            <form method="post" action="{% url 'vendas:finalizar' venda.pk %}">
+                {% csrf_token %}
+                <button class="button button-primary" type="submit">Finalizar Venda</button>
+            </form>
+            <form method="post" action="{% url 'vendas:cancelar' venda.pk %}">
+                {% csrf_token %}
+                <button class="button button-secondary" type="submit">Cancelar Venda</button>
+            </form>
+        {% endif %}
+    </aside>
+</section>
+
+{% if venda.status == "em_andamento" %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var input = document.getElementById("{{ form.codigo_barras.id_for_label }}");
+            if (input) {
+                input.focus();
+            }
+        });
+    </script>
+{% endif %}
+{% endblock %}

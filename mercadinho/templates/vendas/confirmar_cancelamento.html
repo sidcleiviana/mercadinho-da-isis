@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Cancelar Venda | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Venda</p>
+    <h1>Cancelar Venda</h1>
+    <p>Nenhum estoque ou caixa sera alterado.</p>
+</section>
+
+<form class="form-panel" method="post">
+    {% csrf_token %}
+    <p>Deseja cancelar a venda {{ venda.numero_venda }}?</p>
+    <div class="form-actions">
+        <button class="button button-primary" type="submit">Confirmar</button>
+        <a class="button button-secondary" href="{% url 'vendas:atendimento' venda.pk %}">Voltar</a>
+    </div>
+</form>
+{% endblock %}

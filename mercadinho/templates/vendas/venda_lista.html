@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Vendas | Mercadinho da Ísis{% endblock %}
+
+{% block content %}
+<section class="page-header page-header-actions">
+    <div>
+        <p class="eyebrow">Vendas</p>
+        <h1>Vendas</h1>
+        <p>Historico de vendas e abertura de novo atendimento de venda.</p>
+    </div>
+    <a class="button button-primary" href="{% url 'vendas:nova' %}">Nova Venda</a>
+</section>
+
+{% if messages %}
+    <div class="message-list" aria-live="polite">
+        {% for message in messages %}
+            <p class="message message-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if vendas %}
+    <div class="table-panel">
+        <table>
+            <thead>
+                <tr>
+                    <th>Numero</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th>Itens</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for venda in vendas %}
+                    <tr>
+                        <td>{{ venda.numero_venda }}</td>
+                        <td>{{ venda.data|date:"d/m/Y H:i" }}</td>
+                        <td>{{ venda.get_status_display }}</td>
+                        <td>{{ venda.itens.count }}</td>
+                        <td>R$ {{ venda.valor_total }}</td>
+                        <td>
+                            {% if venda.status == "em_andamento" %}
+                                <a class="button button-secondary" href="{% url 'vendas:atendimento' venda.pk %}">Continuar</a>
+                            {% else %}
+                                <a class="button button-secondary" href="{% url 'vendas:atendimento' venda.pk %}">Ver</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+        <nav class="pagination" aria-label="Paginacao">
+            {% if page_obj.has_previous %}
+                <a class="button button-secondary" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+            <span>Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a class="button button-secondary" href="?page={{ page_obj.next_page_number }}">Proxima</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% else %}
+    <section class="empty-state">
+        <h2>Nenhuma venda registrada</h2>
+        <p>Inicie uma nova venda para registrar produtos pelo codigo de barras.</p>
+    </section>
+{% endif %}
+{% endblock %}
