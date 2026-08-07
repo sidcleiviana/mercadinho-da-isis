@@ -30,6 +30,7 @@ from .services import (
     gerar_atendimentos_do_dia,
     garantir_clientes_iniciais,
     iniciar_atendimento,
+    NOMES_INICIAIS,
     processar_desistencias,
     processar_fluxo_clientes,
     responder_conversa,
@@ -68,8 +69,9 @@ class MotorClientesVirtuaisTest(TestCase):
     def test_garante_clientes_iniciais_sem_personalidade(self):
         garantir_clientes_iniciais()
 
-        self.assertEqual(ClienteVirtual.objects.count(), 15)
+        self.assertEqual(ClienteVirtual.objects.count(), len(NOMES_INICIAIS))
         self.assertTrue(ClienteVirtual.objects.filter(nome="Ana", ativo=True).exists())
+        self.assertTrue(ClienteVirtual.objects.filter(nome="Ísis", ativo=True).exists())
 
     def test_nao_gera_clientes_com_expediente_fechado(self):
         atendimentos = gerar_atendimentos_do_dia(timezone.now())

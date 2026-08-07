@@ -2483,6 +2483,8 @@ tbody tr:hover td {
 }
 
 .mf-client-emoji {
+    position: relative;
+    z-index: 2;
     font-size: 44px;
     line-height: 1;
     transform: translateY(-2px);
@@ -2503,6 +2505,34 @@ tbody tr:hover td {
         linear-gradient(90deg, transparent 42%, rgba(255, 255, 255, 0.56) 42% 58%, transparent 58%),
         var(--avatar-shirt);
     box-shadow: 0 5px 0 rgba(127, 79, 107, 0.1);
+}
+
+.mf-client-hair {
+    position: absolute;
+    left: 14px;
+    top: 8px;
+    z-index: 1;
+    width: 48px;
+    height: 22px;
+    border-radius: 22px 22px 10px 10px;
+    background: var(--avatar-hair);
+    opacity: 0.42;
+    transform: rotate(-3deg);
+}
+
+.mf-client-accessory {
+    position: absolute;
+    right: 2px;
+    top: 0;
+    z-index: 4;
+    display: inline-grid;
+    place-items: center;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 50%;
+    font-size: 22px;
+    filter: drop-shadow(0 3px 0 rgba(127, 79, 107, 0.12));
+    animation: mf-accessory-wiggle 3.2s ease-in-out infinite;
 }
 
 .mf-client-avatar-mini .mf-client-shirt {
@@ -2541,7 +2571,9 @@ tbody tr:hover td {
 }
 
 .mf-client-avatar-mini .mf-client-smile,
-.mf-client-avatar-mini .mf-client-blink {
+.mf-client-avatar-mini .mf-client-blink,
+.mf-client-avatar-mini .mf-client-hair,
+.mf-client-avatar-mini .mf-client-accessory {
     display: none;
 }
 
@@ -2781,6 +2813,17 @@ tbody tr:hover td {
     50% {
         background: linear-gradient(135deg, var(--isis-yellow), var(--isis-pink));
         transform: scale(1.06);
+    }
+}
+
+@keyframes mf-accessory-wiggle {
+    0%,
+    100% {
+        transform: rotate(-6deg);
+    }
+
+    50% {
+        transform: rotate(8deg) translateY(-2px);
     }
 }
 

@@ -29,22 +29,104 @@ from .models import (
 INTERVALO_MINIMO_CHEGADA_MINUTOS = 2
 INTERVALO_MAXIMO_CHEGADA_MINUTOS = 8
 
-NOMES_INICIAIS = [
-    "Ana",
-    "Carlos",
-    "Fernanda",
-    "Joao",
-    "Julia",
-    "Lucas",
+NOMES_MENINAS = [
+    "Ísis",
+    "Alice",
+    "Helena",
+    "Laura",
+    "Valentina",
+    "Sofia",
+    "Cecilia",
+    "Manuela",
+    "Luna",
+    "Liz",
+    "Beatriz",
+    "Júlia",
     "Maria",
+    "Heloísa",
+    "Clara",
+    "Elisa",
+    "Aurora",
+    "Catarina",
+    "Melissa",
+    "Bianca",
+    "Ana",
+    "Fernanda",
+]
+
+NOMES_MENINOS = [
+    "Miguel",
+    "Arthur",
+    "Theo",
+    "Davi",
+    "Bernardo",
+    "Gabriel",
+    "Lucas",
     "Pedro",
     "Rafael",
-    "Sofia",
-    "Helena",
-    "Miguel",
-    "Laura",
+    "Enzo",
+    "Samuel",
+    "Heitor",
+    "Matheus",
+    "Henrique",
+    "Benjamin",
+    "Caio",
+    "Joaquim",
+    "Nicolas",
+    "Felipe",
+    "Daniel",
+    "Carlos",
+    "Joao",
     "Gustavo",
-    "Beatriz",
+]
+
+NOMES_INICIAIS = NOMES_MENINAS + NOMES_MENINOS
+
+MENSAGENS_CHEGADA = [
+    "😊 {nome} acabou de entrar no mercadinho.",
+    "🛒 {nome} está procurando produtos.",
+    "🍫 {nome} veio comprar doces.",
+    "🍎 {nome} entrou na fila.",
+    "🧸 {nome} está esperando atendimento.",
+    "🚗 {nome} quer comprar um carrinho.",
+    "🥛 {nome} está escolhendo produtos.",
+    "🎈 {nome} acabou de chegar.",
+    "🛍️ {nome} entrou no mercado.",
+    "✨ {nome} veio conhecer o mercadinho.",
+]
+
+MENSAGENS_ATENDIMENTO = [
+    "😊 {nome} está no balcão escolhendo produtos.",
+    "💬 {nome} começou a conversar no atendimento.",
+    "🧾 {nome} está fazendo uma comprinha.",
+    "🌈 {nome} foi chamado para o atendimento.",
+]
+
+MENSAGENS_DESISTENCIA = [
+    "👋 {nome} foi embora depois de esperar um pouco.",
+    "😴 {nome} esperou bastante e saiu da fila.",
+    "🎈 {nome} decidiu voltar outro dia.",
+    "💬 {nome} desistiu após tempo de espera.",
+]
+
+MENSAGENS_CANCELAMENTO = [
+    "👋 {nome} saiu do atendimento e foi embora.",
+    "🎈 {nome} decidiu voltar mais tarde.",
+    "💬 {nome} encerrou o atendimento sem compra.",
+]
+
+MENSAGENS_ATENDIDO = [
+    "🥳 {nome} terminou a compra feliz.",
+    "🎉 {nome} foi atendido com carinho.",
+    "🛍️ {nome} saiu com a comprinha pronta.",
+    "😊 {nome} adorou o atendimento.",
+]
+
+MENSAGENS_COMPRA = [
+    "🥳 {nome} comprou {quantidade} produto(s).",
+    "🎉 {nome} saiu feliz com {quantidade} produto(s).",
+    "🛍️ {nome} levou {quantidade} produto(s) do mercadinho.",
+    "💖 {nome} finalizou uma compra com {quantidade} produto(s).",
 ]
 
 
@@ -147,15 +229,37 @@ def _momento_base_para_proximo_cliente(agora):
 
 def _cliente_disponivel_para_chegada(agora):
     clientes_usados = atendimentos_do_dia(agora).values_list("cliente_virtual_id", flat=True)
-    clientes = list(
-        ClienteVirtual.objects.filter(ativo=True)
-        .exclude(id__in=clientes_usados)
-        .order_by("nome", "id")
-    )
+    clientes_base = ClienteVirtual.objects.filter(ativo=True).exclude(id__in=clientes_usados)
+    clientes = list(clientes_base.order_by("nome", "id"))
     if not clientes:
         return None
-    rng = random.Random(f"{agora.date().isoformat()}:{len(clientes_usados)}:cliente")
-    return clientes[rng.randrange(len(clientes))]
+
+    gerados = len(clientes_usados)
+    genero_preferido = "menina" if gerados % 2 == 0 else "menino"
+    nomes_genero = set(NOMES_MENINAS if genero_preferido == "menina" else NOMES_MENINOS)
+    clientes_genero = [cliente for cliente in clientes if cliente.nome in nomes_genero]
+    candidatos = clientes_genero or clientes
+
+    ultimos_clientes = list(
+        AtendimentoVirtual.objects.select_related("cliente_virtual")
+        .order_by("-horario_programado", "-id")
+        .values_list("cliente_virtual__nome", flat=True)[:3]
+    )
+    sem_repeticao_recente = [
+        cliente for cliente in candidatos if cliente.nome not in ultimos_clientes
+    ]
+    if sem_repeticao_recente:
+        candidatos = sem_repeticao_recente
+
+    rng = random.Random(f"{agora.date().isoformat()}:{gerados}:cliente:{genero_preferido}")
+    return candidatos[rng.randrange(len(candidatos))]
+
+
+def _mensagem_variada(modelos, atendimento, agora, **contexto):
+    contexto.setdefault("nome", atendimento.cliente_virtual.nome)
+    seed = f"{agora.date().isoformat()}:{atendimento.pk}:{atendimento.cliente_virtual.nome}"
+    rng = random.Random(seed)
+    return rng.choice(modelos).format(**contexto)
 
 
 def existe_cliente_ativo_no_fluxo(agora=None):
@@ -208,7 +312,7 @@ def processar_chegadas(agora=None):
         evento = registrar_evento(
             atendimento,
             EventoCliente.Tipo.ENTROU_FILA,
-            f"Cliente {atendimento.cliente_virtual.nome} entrou na fila",
+            _mensagem_variada(MENSAGENS_CHEGADA, atendimento, agora),
             data=agora,
         )
     return [evento]
@@ -236,7 +340,7 @@ def processar_desistencias(agora=None):
                 registrar_evento(
                     atendimento,
                     EventoCliente.Tipo.DESISTIU,
-                    f"Cliente {atendimento.cliente_virtual.nome} desistiu apos tempo de espera.",
+                    _mensagem_variada(MENSAGENS_DESISTENCIA, atendimento, agora),
                     data=agora,
                 )
             )
@@ -316,7 +420,7 @@ def iniciar_atendimento(atendimento_id, agora=None):
         registrar_evento(
             atendimento,
             EventoCliente.Tipo.ATENDIMENTO_INICIADO,
-            f"Cliente {atendimento.cliente_virtual.nome} esta em atendimento",
+            _mensagem_variada(MENSAGENS_ATENDIMENTO, atendimento, agora),
             data=agora,
         )
         preparar_conversa(atendimento, agora)
@@ -351,11 +455,13 @@ def finalizar_atendimento_por_venda(venda, agora=None):
             ]
         )
         quantidade_produtos = sum(item.quantidade for item in venda.itens.all())
-        mensagem = f"Cliente {atendimento.cliente_virtual.nome} foi atendido"
+        mensagem = _mensagem_variada(MENSAGENS_ATENDIDO, atendimento, agora)
         if quantidade_produtos:
-            mensagem = (
-                f"Cliente {atendimento.cliente_virtual.nome} comprou "
-                f"{quantidade_produtos} produto(s)."
+            mensagem = _mensagem_variada(
+                MENSAGENS_COMPRA,
+                atendimento,
+                agora,
+                quantidade=quantidade_produtos,
             )
         registrar_evento(
             atendimento,
@@ -392,7 +498,7 @@ def cancelar_atendimento(atendimento, agora=None):
         registrar_evento(
             atendimento,
             EventoCliente.Tipo.DESISTIU,
-            f"Cliente {atendimento.cliente_virtual.nome} desistiu durante o atendimento.",
+            _mensagem_variada(MENSAGENS_CANCELAMENTO, atendimento, agora),
             data=agora,
         )
     return atendimento
@@ -419,7 +525,7 @@ def cancelar_atendimento_por_venda(venda, agora=None):
         registrar_evento(
             atendimento,
             EventoCliente.Tipo.DESISTIU,
-            f"Cliente {atendimento.cliente_virtual.nome} desistiu durante o atendimento.",
+            _mensagem_variada(MENSAGENS_CANCELAMENTO, atendimento, atendimento.horario_finalizacao),
             data=atendimento.horario_finalizacao,
         )
     return atendimento

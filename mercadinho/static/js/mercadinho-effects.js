@@ -6,23 +6,35 @@
     var clientMemoryStore = "mercadinho-client-memory";
     var clientArrivalStore = "mercadinho-client-arrivals";
     var audioContext = null;
+    var femaleNames = [
+        "isis", "alice", "helena", "laura", "valentina", "sofia", "cecilia", "manuela",
+        "luna", "liz", "beatriz", "julia", "maria", "heloisa", "clara", "elisa",
+        "aurora", "catarina", "melissa", "bianca", "ana", "fernanda"
+    ];
+    var maleNames = [
+        "miguel", "arthur", "theo", "davi", "bernardo", "gabriel", "lucas", "pedro",
+        "rafael", "enzo", "samuel", "heitor", "matheus", "henrique", "benjamin", "caio",
+        "joaquim", "nicolas", "felipe", "daniel", "carlos", "joao", "gustavo"
+    ];
     var characterProfiles = [
-        { emoji: "👧", title: "Menina sorridente", mood: "😊", color: "#ffc2e2" },
-        { emoji: "👦", title: "Menino de boné", mood: "😄", color: "#a6e2fe" },
-        { emoji: "👵", title: "Vovó simpática", mood: "🥰", color: "#fff0a8" },
-        { emoji: "👴", title: "Vovô gentil", mood: "😊", color: "#e8d5ff" },
-        { emoji: "🧒", title: "Criança curiosa", mood: "🤔", color: "#b4f2d6" },
-        { emoji: "👩", title: "Mamãe", mood: "😍", color: "#ffd1dc" },
-        { emoji: "👨", title: "Papai", mood: "😄", color: "#b8e8ff" },
-        { emoji: "🧑‍🍳", title: "Cozinheiro", mood: "😋", color: "#ffe0b5" },
-        { emoji: "🦸", title: "Super-herói", mood: "🥳", color: "#d5c7ff" },
-        { emoji: "🧙", title: "Mago", mood: "😲", color: "#d9c2ff" },
-        { emoji: "🧸", title: "Ursinho", mood: "🥰", color: "#f6d7b8" },
-        { emoji: "🐼", title: "Panda", mood: "😊", color: "#e5e7eb" },
-        { emoji: "🐱", title: "Gatinho", mood: "😺", color: "#ffd6a5" },
-        { emoji: "🐰", title: "Coelhinho", mood: "😍", color: "#ffe4f1" },
-        { emoji: "🐶", title: "Cachorrinho", mood: "😄", color: "#d8b894" },
-        { emoji: "🐸", title: "Sapinho", mood: "🤗", color: "#b4f2d6" }
+        { emoji: "👧", gender: "female", title: "Menina sorridente", mood: "😊", color: "#ffc2e2" },
+        { emoji: "👧", gender: "female", title: "Menina de laço", mood: "😍", color: "#ffe4f1" },
+        { emoji: "👩", gender: "female", title: "Mamãe alegre", mood: "🥰", color: "#ffd1dc" },
+        { emoji: "👵", gender: "female", title: "Vovó simpática", mood: "🥰", color: "#fff0a8" },
+        { emoji: "👦", gender: "male", title: "Menino de boné", mood: "😄", color: "#a6e2fe" },
+        { emoji: "👦", gender: "male", title: "Menino curioso", mood: "🤔", color: "#b4f2d6" },
+        { emoji: "👨", gender: "male", title: "Papai alegre", mood: "😄", color: "#b8e8ff" },
+        { emoji: "👴", gender: "male", title: "Vovô gentil", mood: "😊", color: "#e8d5ff" },
+        { emoji: "🧒", gender: "any", title: "Criança curiosa", mood: "🤔", color: "#b4f2d6" },
+        { emoji: "🧑‍🍳", gender: "any", title: "Cozinheiro", mood: "😋", color: "#ffe0b5" },
+        { emoji: "🦸", gender: "any", title: "Super-herói", mood: "🥳", color: "#d5c7ff" },
+        { emoji: "🧙", gender: "any", title: "Mago", mood: "😲", color: "#d9c2ff" },
+        { emoji: "🧸", gender: "any", title: "Ursinho", mood: "🥰", color: "#f6d7b8" },
+        { emoji: "🐼", gender: "any", title: "Panda", mood: "😊", color: "#e5e7eb" },
+        { emoji: "🐱", gender: "any", title: "Gatinho", mood: "😺", color: "#ffd6a5" },
+        { emoji: "🐰", gender: "any", title: "Coelhinho", mood: "😍", color: "#ffe4f1" },
+        { emoji: "🐶", gender: "any", title: "Cachorrinho", mood: "😄", color: "#d8b894" },
+        { emoji: "🐸", gender: "any", title: "Sapinho", mood: "🤗", color: "#b4f2d6" }
     ];
     var personalityLines = [
         "Que mercadinho bonito!",
@@ -286,10 +298,41 @@
         return normalize(name || "cliente").replace(/\s+/g, "-");
     }
 
+    function genderForName(name) {
+        var key = clientKey(name);
+        if (femaleNames.indexOf(key) >= 0) {
+            return "female";
+        }
+        if (maleNames.indexOf(key) >= 0) {
+            return "male";
+        }
+        return "any";
+    }
+
     function profileForClient(name, id) {
         var seed = hashText((name || "") + ":" + (id || ""));
-        var profile = characterProfiles[seed % characterProfiles.length];
-        var shirtColors = ["#ffc2e2", "#a6e2fe", "#fff0a8", "#b4f2d6", "#e8d5ff", "#ffd6a5"];
+        var gender = genderForName(name);
+        var compatibleProfiles = characterProfiles.filter(function (profile) {
+            if (gender === "any") {
+                return true;
+            }
+            if (seed % 6 === 0) {
+                return profile.gender === gender || profile.gender === "any";
+            }
+            return profile.gender === gender;
+        });
+        var profiles = compatibleProfiles.length ? compatibleProfiles : characterProfiles;
+        var profile = profiles[seed % profiles.length];
+        var shirtColors = ["#ffc2e2", "#a6e2fe", "#fff0a8", "#b4f2d6", "#e8d5ff", "#ffd6a5", "#ffb3c7", "#c7f9cc"];
+        var hairColors = ["#6b3f2f", "#2f241f", "#9a6a3a", "#f2c078", "#5b4b8a", "#7f4f6b"];
+        var accessories = ["🎀", "🧢", "🕶️", "🎒", "⭐", "🌈", ""];
+        var accessory = accessories[(seed + 3) % accessories.length];
+        if (gender === "female" && seed % 3 === 0) {
+            accessory = "🎀";
+        }
+        if (gender === "male" && seed % 3 === 0) {
+            accessory = "🧢";
+        }
         return {
             emoji: profile.emoji,
             title: profile.title,
@@ -297,6 +340,8 @@
             color: profile.color,
             shirt: shirtColors[seed % shirtColors.length],
             accent: shirtColors[(seed + 2) % shirtColors.length],
+            hair: hairColors[seed % hairColors.length],
+            accessory: accessory,
             personality: personalityLines[seed % personalityLines.length]
         };
     }
@@ -334,6 +379,8 @@
             '<span class="mf-client-avatar mf-client-avatar-' + (size || "normal") + '" style="--avatar-bg:' + profile.color + '; --avatar-shirt:' + profile.shirt + '; --avatar-accent:' + profile.accent + '">' +
             '<span class="mf-client-shadow"></span>' +
             '<span class="mf-client-body">' +
+            '<span class="mf-client-hair" style="--avatar-hair:' + profile.hair + '" aria-hidden="true"></span>' +
+            '<span class="mf-client-accessory" aria-hidden="true">' + profile.accessory + '</span>' +
             '<span class="mf-client-emoji">' + profile.emoji + '</span>' +
             '<span class="mf-client-blink" aria-hidden="true"></span>' +
             '<span class="mf-client-smile" aria-hidden="true">' + mood + '</span>' +
@@ -368,7 +415,10 @@
     }
 
     function extractClientName(text) {
-        var match = String(text || "").match(/Cliente\s+(.+?)\s+(entrou|esta|está|comprou|foi|desistiu)/i);
+        var clean = String(text || "")
+            .replace(/^[^\p{L}\p{N}]+/u, "")
+            .trim();
+        var match = clean.match(/^(.+?)\s+(acabou|est[aá]|veio|entrou|quer|foi|esperou|decidiu|saiu|terminou|adorou|levou|finalizou|comprou)/i);
         return match ? match[1].trim() : "";
     }
 
@@ -536,16 +586,16 @@
             seen[key] = true;
             var value = normalize(text);
             var name = extractClientName(text);
-            if (value.indexOf("entrou na fila") >= 0 && name) {
+            if ((value.indexOf("entrou") >= 0 || value.indexOf("acabou de chegar") >= 0 || value.indexOf("acabou de entrar") >= 0) && name) {
                 sound("bell");
             }
-            if (value.indexOf("comprou") >= 0 && name) {
+            if ((value.indexOf("comprou") >= 0 || value.indexOf("finalizou uma compra") >= 0 || value.indexOf("saiu feliz") >= 0 || value.indexOf("levou") >= 0) && name) {
                 var productHint = "produtos";
                 rememberClient(name, productHint);
                 toast("🥳 " + name + " comemorou a compra!", "success");
                 confetti(24);
             }
-            if ((value.indexOf("foi atendido") >= 0 || value.indexOf("desistiu") >= 0) && name) {
+            if ((value.indexOf("foi atendido") >= 0 || value.indexOf("desistiu") >= 0 || value.indexOf("foi embora") >= 0 || value.indexOf("voltou outro dia") >= 0) && name) {
                 rememberClient(name);
             }
         });
