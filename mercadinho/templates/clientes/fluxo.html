@@ -5,12 +5,12 @@
 {% block content %}
 <section class="page-header page-header-actions">
     <div>
-        <p class="eyebrow">Central de Atendimento</p>
-        <h1>Fila de Clientes</h1>
-        <p>Expediente: {{ expediente.get_status_display }}. Os clientes aparecem durante o funcionamento do mercado.</p>
+        <p class="eyebrow">Central de Atendimentos</p>
+        <h1>Visitantes do Mercadinho</h1>
+        <p>Expediente: {{ expediente.get_status_display }}. Quando alguém chegar, o mercadinho avisa com bastante alegria.</p>
     </div>
     {% if atendimento_atual and atendimento_atual.venda %}
-        <a class="button button-primary" href="{% url 'vendas:atendimento' atendimento_atual.venda.pk %}">Continuar Atendimento</a>
+        <a class="button button-primary" href="{% url 'vendas:atendimento' atendimento_atual.venda.pk %}">💬 Continuar Atendimento</a>
     {% endif %}
 </section>
 
@@ -45,48 +45,51 @@
     <article class="dashboard-panel">
         <h2>Atendimento atual</h2>
         {% if atendimento_atual %}
-            <div class="queue-card">
+            <div class="queue-card client-card client-card-current" data-client-card data-client-id="{{ atendimento_atual.pk }}" data-client-name="{{ atendimento_atual.cliente_virtual.nome }}" data-client-status="{{ atendimento_atual.status }}" data-client-started="{{ atendimento_atual.horario_inicio|date:"c" }}">
+                <span class="client-avatar-slot" aria-hidden="true"></span>
                 <div>
                     <strong>{{ atendimento_atual.cliente_virtual.nome }}</strong>
-                    <span>Inicio: {{ atendimento_atual.horario_inicio|date:"H:i" }}</span>
+                    <span class="client-wait-bubble">Em atendimento desde {{ atendimento_atual.horario_inicio|date:"H:i" }}</span>
                 </div>
                 <span class="queue-status">{{ atendimento_atual.get_status_display }}</span>
             </div>
             <div class="action-row action-row-spaced">
-                <a class="button button-primary" href="{% url 'vendas:atendimento' atendimento_atual.venda.pk %}">Ir para venda</a>
+                <a class="button button-primary" href="{% url 'vendas:atendimento' atendimento_atual.venda.pk %}">🧾 Ir para venda</a>
                 <form method="post" action="{% url 'clientes:cancelar' atendimento_atual.pk %}">
                     {% csrf_token %}
-                    <button class="button button-secondary" type="submit">Cancelar atendimento</button>
+                    <button class="button button-secondary" type="submit">👋 Cliente foi embora</button>
                 </form>
             </div>
         {% else %}
-            <p class="panel-empty">Nenhum atendimento em andamento.</p>
+            <p class="panel-empty">Nenhum visitante no balcão agora.</p>
         {% endif %}
     </article>
 
-    <article class="dashboard-panel">
+    <article class="dashboard-panel client-queue-panel" data-client-queue>
         <h2>Clientes aguardando</h2>
         {% if fila %}
-            <div class="queue-list">
+            <div class="client-mini-line" aria-hidden="true"></div>
+            <div class="queue-list client-queue-list">
                 {% for atendimento in fila %}
-                    <article class="queue-card">
+                    <article class="queue-card client-card client-card-waiting" data-client-card data-client-id="{{ atendimento.pk }}" data-client-name="{{ atendimento.cliente_virtual.nome }}" data-client-status="{{ atendimento.status }}" data-client-entered="{{ atendimento.horario_programado|date:"c" }}">
+                        <span class="client-avatar-slot" aria-hidden="true"></span>
                         <div>
                             <strong>{{ atendimento.cliente_virtual.nome }}</strong>
-                            <span>Cliente aguardando atendimento</span>
+                            <span class="client-wait-bubble">Cliente aguardando atendimento</span>
                         </div>
                         {% if atendimento_atual %}
                             <span class="queue-status">{{ atendimento.get_status_display }}</span>
                         {% else %}
                             <form method="post" action="{% url 'clientes:iniciar' atendimento.pk %}">
                                 {% csrf_token %}
-                                <button class="button button-primary" type="submit">Atender</button>
+                                <button class="button button-primary" type="submit">😊 Atender</button>
                             </form>
                         {% endif %}
                     </article>
                 {% endfor %}
             </div>
         {% else %}
-            <p class="panel-empty">Nenhum cliente aguardando. O proximo cliente chegara sem aviso previo.</p>
+            <p class="panel-empty">Nenhum visitante aguardando. O próximo pode aparecer de surpresa.</p>
         {% endif %}
     </article>
 
@@ -96,7 +99,7 @@
             <p>Tempo em funcionamento: {{ tempo_expediente }}</p>
             <p>O sistema libera um cliente por vez conforme o movimento do mercado.</p>
         {% else %}
-            <p class="panel-empty">Abra o expediente para iniciar o movimento de clientes.</p>
+            <p class="panel-empty">Abra o mercado para começar a receber visitantes.</p>
         {% endif %}
     </article>
 
@@ -105,7 +108,7 @@
         {% if eventos %}
             <ul class="notification-list">
                 {% for evento in eventos %}
-                    <li>{{ evento.data|date:"H:i" }} - {{ evento.mensagem }}</li>
+                    <li data-client-event data-event-message="{{ evento.mensagem }}">{{ evento.data|date:"H:i" }} - {{ evento.mensagem }}</li>
                 {% endfor %}
             </ul>
         {% else %}

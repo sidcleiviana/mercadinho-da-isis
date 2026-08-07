@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=mercadinho-feliz-1">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=mercadinho-feliz-2">
 </head>
 <body>
     <header class="topbar">
@@ -36,7 +36,7 @@
             <a class="sidebar-link {% if request.resolver_match.namespace == 'estoque' %}active{% endif %}" href="{% url 'estoque:lista' %}"><span class="nav-icon" aria-hidden="true">📦</span>Estoque</a>
             <a class="sidebar-link {% if request.resolver_match.namespace == 'caixa' %}active{% endif %}" href="{% url 'caixa:dashboard' %}"><span class="nav-icon" aria-hidden="true">💰</span>Cofrinho</a>
             <a class="sidebar-link {% if request.resolver_match.namespace == 'vendas' %}active{% endif %}" href="{% url 'vendas:lista' %}"><span class="nav-icon" aria-hidden="true">🧾</span>Vendas</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'clientes' %}active{% endif %}" href="{% url 'clientes:fluxo' %}"><span class="nav-icon" aria-hidden="true">😊</span>Atendimento</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'clientes' %}active{% endif %}" href="{% url 'clientes:fluxo' %}" data-nav-atendimento><span class="nav-icon" aria-hidden="true">😊</span>Atendimentos</a>
             <a class="sidebar-link {% if request.resolver_match.namespace == 'relatorios' %}active{% endif %}" href="{% url 'relatorios:resumo' %}"><span class="nav-icon" aria-hidden="true">⭐</span>Relatórios</a>
             <span class="sidebar-link disabled"><span class="nav-icon" aria-hidden="true">🎀</span>Configurações</span>
         </nav>
@@ -50,6 +50,6 @@
         <span>💖 Feito para brincar de mercadinho de verdade</span>
     </footer>
     <div id="mercadinho-effects-root" aria-live="polite"></div>
-    <script src="{% static 'js/mercadinho-effects.js' %}?v=1" defer></script>
+    <script src="{% static 'js/mercadinho-effects.js' %}?v=2" defer></script>
 </body>
 </html>

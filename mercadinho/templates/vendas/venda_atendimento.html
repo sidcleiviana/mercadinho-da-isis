@@ -42,12 +42,19 @@
 {% endif %}
 
 {% if conversa %}
-    <section class="conversation-layout">
-        <article class="conversation-panel">
+    <section class="conversation-layout" data-conversation-area data-client-id="{{ conversa.atendimento.pk }}" data-client-name="{{ conversa.atendimento.cliente_virtual.nome }}" data-client-status="{{ conversa.atendimento.status }}">
+        <article class="conversation-panel conversation-chat-panel">
             <h2>Conversa</h2>
+            <div class="conversation-client-head">
+                <span class="client-avatar-slot" aria-hidden="true"></span>
+                <div>
+                    <strong>{{ conversa.atendimento.cliente_virtual.nome }}</strong>
+                    <span>conversando no balcão</span>
+                </div>
+            </div>
             <div class="conversation-list" aria-label="Historico da conversa">
                 {% for interacao in conversa.interacoes %}
-                    <p class="conversation-message conversation-message-{{ interacao.origem }}">
+                    <p class="conversation-message conversation-message-{{ interacao.origem }}" data-chat-message data-chat-origin="{{ interacao.origem }}" data-chat-text="{{ interacao.mensagem }}">
                         <strong>{{ interacao.get_origem_display }}</strong>
                         <span>{{ interacao.mensagem }}</span>
                     </p>
@@ -58,7 +65,7 @@
         <aside class="conversation-panel">
             <h2>Pedido</h2>
             {% if conversa.pedido %}
-                <p><strong>{{ conversa.pedido.produto.nome }}</strong></p>
+                <p class="product-request" data-product-request="{{ conversa.pedido.produto.nome }}"><strong>{{ conversa.pedido.produto.nome }}</strong></p>
                 <p>Quantidade: {{ conversa.pedido.quantidade }}</p>
             {% else %}
                 <p class="panel-empty">Nenhum produto solicitado.</p>

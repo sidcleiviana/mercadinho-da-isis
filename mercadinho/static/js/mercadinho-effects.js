@@ -3,7 +3,37 @@
 
     var rootId = "mercadinho-effects-root";
     var achievementStore = "mercadinho-achievements";
+    var clientMemoryStore = "mercadinho-client-memory";
+    var clientArrivalStore = "mercadinho-client-arrivals";
     var audioContext = null;
+    var characterProfiles = [
+        { emoji: "👧", title: "Menina sorridente", mood: "😊", color: "#ffc2e2" },
+        { emoji: "👦", title: "Menino de boné", mood: "😄", color: "#a6e2fe" },
+        { emoji: "👵", title: "Vovó simpática", mood: "🥰", color: "#fff0a8" },
+        { emoji: "👴", title: "Vovô gentil", mood: "😊", color: "#e8d5ff" },
+        { emoji: "🧒", title: "Criança curiosa", mood: "🤔", color: "#b4f2d6" },
+        { emoji: "👩", title: "Mamãe", mood: "😍", color: "#ffd1dc" },
+        { emoji: "👨", title: "Papai", mood: "😄", color: "#b8e8ff" },
+        { emoji: "🧑‍🍳", title: "Cozinheiro", mood: "😋", color: "#ffe0b5" },
+        { emoji: "🦸", title: "Super-herói", mood: "🥳", color: "#d5c7ff" },
+        { emoji: "🧙", title: "Mago", mood: "😲", color: "#d9c2ff" },
+        { emoji: "🧸", title: "Ursinho", mood: "🥰", color: "#f6d7b8" },
+        { emoji: "🐼", title: "Panda", mood: "😊", color: "#e5e7eb" },
+        { emoji: "🐱", title: "Gatinho", mood: "😺", color: "#ffd6a5" },
+        { emoji: "🐰", title: "Coelhinho", mood: "😍", color: "#ffe4f1" },
+        { emoji: "🐶", title: "Cachorrinho", mood: "😄", color: "#d8b894" },
+        { emoji: "🐸", title: "Sapinho", mood: "🤗", color: "#b4f2d6" }
+    ];
+    var personalityLines = [
+        "Que mercadinho bonito!",
+        "Adorei seu caixa!",
+        "Seu mercado está muito organizado!",
+        "Posso voltar amanhã?",
+        "Nossa, que prateleiras caprichadas!",
+        "Você foi muito rápido!",
+        "Estou escolhendo com calma...",
+        "Hoje eu quero uma compra especial!"
+    ];
 
     function getRoot() {
         var root = document.getElementById(rootId);
@@ -228,6 +258,300 @@
         return "✨";
     }
 
+    function hashText(text) {
+        var hash = 0;
+        var value = String(text || "mercadinho");
+        for (var i = 0; i < value.length; i += 1) {
+            hash = ((hash << 5) - hash) + value.charCodeAt(i);
+            hash |= 0;
+        }
+        return Math.abs(hash);
+    }
+
+    function readJsonStore(key) {
+        try {
+            return JSON.parse(window.localStorage.getItem(key) || "{}");
+        } catch (error) {
+            return {};
+        }
+    }
+
+    function saveJsonStore(key, value) {
+        try {
+            window.localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {}
+    }
+
+    function clientKey(name) {
+        return normalize(name || "cliente").replace(/\s+/g, "-");
+    }
+
+    function profileForClient(name, id) {
+        var seed = hashText((name || "") + ":" + (id || ""));
+        var profile = characterProfiles[seed % characterProfiles.length];
+        var shirtColors = ["#ffc2e2", "#a6e2fe", "#fff0a8", "#b4f2d6", "#e8d5ff", "#ffd6a5"];
+        return {
+            emoji: profile.emoji,
+            title: profile.title,
+            mood: profile.mood,
+            color: profile.color,
+            shirt: shirtColors[seed % shirtColors.length],
+            accent: shirtColors[(seed + 2) % shirtColors.length],
+            personality: personalityLines[seed % personalityLines.length]
+        };
+    }
+
+    function getClientMemory(name) {
+        var memory = readJsonStore(clientMemoryStore);
+        return memory[clientKey(name)] || { visits: 0, lastProduct: "", lastSeen: "" };
+    }
+
+    function rememberClient(name, product) {
+        var memory = readJsonStore(clientMemoryStore);
+        var key = clientKey(name);
+        var current = memory[key] || { visits: 0, lastProduct: "", lastSeen: "" };
+        current.visits += 1;
+        current.lastSeen = new Date().toISOString();
+        if (product) {
+            current.lastProduct = product;
+        }
+        memory[key] = current;
+        saveJsonStore(clientMemoryStore, memory);
+        return current;
+    }
+
+    function clientAvatar(name, id, status, size) {
+        var profile = profileForClient(name, id);
+        var mood = profile.mood;
+        if (status === "em_atendimento") {
+            mood = "😊";
+        } else if (status === "finalizado") {
+            mood = "🥳";
+        } else if (status === "desistiu") {
+            mood = "👋";
+        }
+        return (
+            '<span class="mf-client-avatar mf-client-avatar-' + (size || "normal") + '" style="--avatar-bg:' + profile.color + '; --avatar-shirt:' + profile.shirt + '; --avatar-accent:' + profile.accent + '">' +
+            '<span class="mf-client-shadow"></span>' +
+            '<span class="mf-client-body">' +
+            '<span class="mf-client-emoji">' + profile.emoji + '</span>' +
+            '<span class="mf-client-blink" aria-hidden="true"></span>' +
+            '<span class="mf-client-smile" aria-hidden="true">' + mood + '</span>' +
+            '</span>' +
+            '<span class="mf-client-shirt"></span>' +
+            '</span>'
+        );
+    }
+
+    function waitBubbleText(name, status, enteredAt) {
+        var memory = getClientMemory(name);
+        var profile = profileForClient(name, name);
+        if (status === "em_atendimento") {
+            return "😊 Estou escolhendo meus produtos!";
+        }
+        if (memory.visits > 0 && memory.lastProduct) {
+            return "😊 Oi! Voltei! Gostei de " + memory.lastProduct + " da última vez!";
+        }
+        if (memory.visits > 0) {
+            return "🐼 Lembra de mim? Vim fazer compras de novo!";
+        }
+        if (enteredAt) {
+            var entered = new Date(enteredAt);
+            if (!Number.isNaN(entered.getTime())) {
+                var minutes = Math.max(0, Math.floor((Date.now() - entered.getTime()) / 60000));
+                if (minutes >= 2) {
+                    return "😴 Estou esperando faz " + minutes + " minutinhos...";
+                }
+            }
+        }
+        return profile.mood + " " + profile.personality;
+    }
+
+    function extractClientName(text) {
+        var match = String(text || "").match(/Cliente\s+(.+?)\s+(entrou|esta|está|comprou|foi|desistiu)/i);
+        return match ? match[1].trim() : "";
+    }
+
+    function updateNavBadge(count) {
+        var nav = document.querySelector("[data-nav-atendimento]");
+        if (!nav) {
+            return;
+        }
+        var badge = nav.querySelector(".mf-nav-badge");
+        if (!badge) {
+            badge = makeEl("span", "mf-nav-badge", "");
+            nav.appendChild(badge);
+        }
+        if (count > 0) {
+            badge.textContent = count;
+            nav.classList.add("mf-nav-attention");
+            window.setTimeout(function () {
+                nav.classList.remove("mf-nav-attention");
+            }, 5200);
+        } else {
+            badge.remove();
+            nav.classList.remove("mf-nav-attention");
+        }
+    }
+
+    function notifyNewClient(card, name, id) {
+        var arrivals = readJsonStore(clientArrivalStore);
+        var key = "atendimento-" + id;
+        if (arrivals[key]) {
+            return;
+        }
+        arrivals[key] = new Date().toISOString();
+        saveJsonStore(clientArrivalStore, arrivals);
+
+        var profile = profileForClient(name, id);
+        var memory = getClientMemory(name);
+        var message = memory.visits > 0 && memory.lastProduct
+            ? profile.mood + " " + name + " voltou! Gostou de " + memory.lastProduct + " da última vez."
+            : profile.mood + " " + name + " quer fazer compras!";
+
+        sound("bell");
+        toast("🔔 Novo cliente chegou! " + message, "success");
+        card.classList.add("mf-client-walk-in");
+        updateNavBadge(document.querySelectorAll(".client-card-waiting").length);
+    }
+
+    function decorateClientCards() {
+        var cards = document.querySelectorAll("[data-client-card]");
+        if (!cards.length) {
+            updateNavBadge(0);
+            return;
+        }
+        cards.forEach(function (card) {
+            var name = card.dataset.clientName || "Cliente";
+            var id = card.dataset.clientId || name;
+            var status = card.dataset.clientStatus || "";
+            var slot = card.querySelector(".client-avatar-slot");
+            if (slot && !slot.dataset.ready) {
+                slot.innerHTML = clientAvatar(name, id, status, "normal");
+                slot.dataset.ready = "true";
+            }
+            var bubble = card.querySelector(".client-wait-bubble");
+            if (bubble) {
+                bubble.textContent = waitBubbleText(name, status, card.dataset.clientEntered);
+            }
+            card.dataset.characterReady = "true";
+            if (card.classList.contains("client-card-waiting")) {
+                notifyNewClient(card, name, id);
+            }
+        });
+
+        var miniLine = document.querySelector(".client-mini-line");
+        if (miniLine) {
+            miniLine.innerHTML = "";
+            cards.forEach(function (card) {
+                if (!card.classList.contains("client-card-waiting")) {
+                    return;
+                }
+                var mini = makeEl("span", "mf-client-mini", "");
+                mini.innerHTML = clientAvatar(card.dataset.clientName, card.dataset.clientId, card.dataset.clientStatus, "mini");
+                miniLine.appendChild(mini);
+            });
+        }
+        updateNavBadge(document.querySelectorAll(".client-card-waiting").length);
+    }
+
+    function friendlyChatText(text, origin) {
+        var value = normalize(text);
+        var productMatch = text.match(/de\s+(.+?)\.?$/i);
+        var product = productMatch ? productMatch[1].replace(/\.$/, "") : "";
+        if (origin === "sistema" && value.indexOf("cliente pede") >= 0 && product) {
+            return "Oi! Hoje quero comprar " + productEmoji(product) + " " + product + "!";
+        }
+        if (origin === "sistema" && value.indexOf("produto adicionado") >= 0) {
+            return "Que legal! Esse produto entrou na minha comprinha.";
+        }
+        if (origin === "sistema" && value.indexOf("atendimento encerrado") >= 0) {
+            return "Tudo bem, eu volto outro dia.";
+        }
+        if (origin === "operadora" && value.indexOf("sim") >= 0) {
+            return "Tenho sim! Vou colocar na compra.";
+        }
+        if (origin === "operadora" && value.indexOf("nao") >= 0) {
+            return "Hoje não temos esse produto.";
+        }
+        if (origin === "operadora" && value.indexOf("verificar outros") >= 0) {
+            return "Vamos olhar outros produtos bonitos.";
+        }
+        if (origin === "operadora" && value.indexOf("finalizar") >= 0) {
+            return "Vamos finalizar a compra!";
+        }
+        return text;
+    }
+
+    function decorateConversation() {
+        var area = document.querySelector("[data-conversation-area]");
+        if (!area) {
+            return;
+        }
+        var name = area.dataset.clientName || "Cliente";
+        var id = area.dataset.clientId || name;
+        var status = area.dataset.clientStatus || "em_atendimento";
+        var headSlot = area.querySelector(".conversation-client-head .client-avatar-slot");
+        if (headSlot && !headSlot.dataset.ready) {
+            headSlot.innerHTML = clientAvatar(name, id, status, "normal");
+            headSlot.dataset.ready = "true";
+        }
+        area.querySelectorAll("[data-chat-message]").forEach(function (message, index) {
+            if (message.dataset.ready) {
+                return;
+            }
+            var origin = message.dataset.chatOrigin || "";
+            var textSpan = message.querySelector("span");
+            var original = message.dataset.chatText || (textSpan ? textSpan.textContent : "");
+            var face = origin === "operadora" ? "🧒" : profileForClient(name, id).mood;
+            var typing = makeEl("span", "mf-typing", "💬 ...");
+            typing.style.setProperty("--delay", (index * 120) + "ms");
+            message.parentNode.insertBefore(typing, message);
+            message.classList.add("mf-chat-bubble", origin === "operadora" ? "mf-chat-operator" : "mf-chat-client");
+            message.style.setProperty("--delay", (index * 120 + 180) + "ms");
+            message.insertBefore(makeEl("span", "mf-chat-face", face), message.firstChild);
+            if (textSpan) {
+                textSpan.textContent = friendlyChatText(original, origin);
+            }
+            message.dataset.ready = "true";
+        });
+        document.querySelectorAll("[data-product-request]").forEach(function (item) {
+            if (item.dataset.ready) {
+                return;
+            }
+            var nameValue = item.dataset.productRequest || item.textContent.trim();
+            item.insertAdjacentHTML("afterbegin", '<span class="mf-product-illustration">' + productEmoji(nameValue) + "</span>");
+            item.dataset.ready = "true";
+        });
+    }
+
+    function handleClientEvents() {
+        var seen = readJsonStore("mercadinho-client-events");
+        document.querySelectorAll("[data-client-event]").forEach(function (eventItem) {
+            var text = eventItem.dataset.eventMessage || eventItem.textContent || "";
+            var key = normalize(text);
+            if (seen[key]) {
+                return;
+            }
+            seen[key] = true;
+            var value = normalize(text);
+            var name = extractClientName(text);
+            if (value.indexOf("entrou na fila") >= 0 && name) {
+                sound("bell");
+            }
+            if (value.indexOf("comprou") >= 0 && name) {
+                var productHint = "produtos";
+                rememberClient(name, productHint);
+                toast("🥳 " + name + " comemorou a compra!", "success");
+                confetti(24);
+            }
+            if ((value.indexOf("foi atendido") >= 0 || value.indexOf("desistiu") >= 0) && name) {
+                rememberClient(name);
+            }
+        });
+        saveJsonStore("mercadinho-client-events", seen);
+    }
+
     function lastProductName() {
         var rows = document.querySelectorAll(".sale-items-panel tbody tr");
         if (!rows.length) {
@@ -426,6 +750,9 @@
     function init() {
         getRoot();
         addGlobalInteractions();
+        decorateClientCards();
+        decorateConversation();
+        handleClientEvents();
         wirePaymentForms();
         handleMessages();
     }
@@ -435,6 +762,7 @@
         bounce: bounce,
         celebration: celebration,
         confetti: confetti,
+        decorateClientCards: decorateClientCards,
         shake: shake,
         sound: sound,
         stars: stars,
