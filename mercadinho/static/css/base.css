@@ -3009,3 +3009,251 @@ tbody tr:hover td {
         opacity: 1 !important;
     }
 }
+
+/* Prateleira de produtos - cards compactos estilo Mercadinho Feliz */
+.product-shelf-tools {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.product-category-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.product-pill {
+    min-width: 82px;
+    padding: 8px 18px;
+    border: 2px solid rgba(127, 79, 107, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--isis-plum);
+    box-shadow: 0 4px 0 rgba(127, 79, 107, 0.14), 0 10px 18px rgba(127, 79, 107, 0.08);
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.product-pill:hover,
+.product-pill.active {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgba(127, 79, 107, 0.16), 0 12px 20px rgba(127, 79, 107, 0.1);
+}
+
+.product-pill-all {
+    background: linear-gradient(180deg, #9b5a83, #73435f);
+    color: #ffffff;
+}
+
+.product-pill-1 {
+    background: linear-gradient(180deg, #a6e2fe, #87cfe9);
+}
+
+.product-pill-2 {
+    background: linear-gradient(180deg, #fff0a8, #ddd27b);
+}
+
+.product-pill-3 {
+    background: linear-gradient(180deg, #ffc2c2, #f1aaaa);
+}
+
+.product-pill-4 {
+    background: linear-gradient(180deg, #b4f2d6, #92dfbd);
+}
+
+.product-pill-5 {
+    background: linear-gradient(180deg, #e8d5ff, #d5b8f2);
+}
+
+.product-search-form {
+    max-width: 780px;
+    margin-bottom: 0;
+    padding: 14px;
+    border-radius: 24px;
+}
+
+.product-shelf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+.product-shelf-card {
+    position: relative;
+    min-height: 236px;
+    padding: 0;
+    border: 2px solid rgba(127, 79, 107, 0.2);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 5px 0 rgba(127, 79, 107, 0.12), 0 14px 24px rgba(127, 79, 107, 0.1);
+    overflow: visible;
+}
+
+.product-shelf-card:nth-child(3n+1) {
+    border-color: rgba(127, 79, 107, 0.42);
+}
+
+.product-shelf-card:nth-child(3n+2) {
+    border-color: rgba(47, 143, 157, 0.42);
+}
+
+.product-shelf-card:nth-child(3n+3) {
+    border-color: rgba(255, 138, 167, 0.44);
+}
+
+.product-shelf-card:hover {
+    transform: translateY(-4px) scale(1.03);
+}
+
+.product-shelf-art {
+    position: relative;
+    display: grid;
+    min-height: 122px;
+    place-items: center;
+    padding: 20px 16px 8px;
+    background: transparent;
+    text-decoration: none;
+}
+
+.product-illustration-slot {
+    display: grid;
+    place-items: center;
+    width: 92px;
+    height: 92px;
+    border-radius: 28px;
+}
+
+.mf-product-card-svg {
+    width: 86px;
+    height: 86px;
+    filter: drop-shadow(0 5px 0 rgba(127, 79, 107, 0.14));
+}
+
+.product-stock-badge {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    display: grid;
+    min-width: 28px;
+    height: 28px;
+    place-items: center;
+    padding: 0 7px;
+    border: 3px solid #ffffff;
+    border-radius: 999px;
+    background: #fff0a8;
+    color: var(--isis-plum);
+    box-shadow: 0 4px 0 rgba(127, 79, 107, 0.12);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.product-shelf-card .product-card-body {
+    padding: 0 14px 14px;
+    text-align: center;
+}
+
+.product-shelf-card h2 {
+    min-height: 38px;
+    margin: 0 0 6px;
+    color: #1f1b24;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.05;
+}
+
+.product-shelf-card .product-price {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    margin: 0 0 8px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #fff0a8;
+    color: var(--isis-plum);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.product-shelf-card:nth-child(3n+2) .product-price {
+    background: #a6e2fe;
+}
+
+.product-shelf-card:nth-child(3n+3) .product-price {
+    background: #ffc2c2;
+    color: #b4234b;
+}
+
+.product-shelf-card .product-meta {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.product-shelf-card .product-code {
+    display: none;
+}
+
+.product-stars {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin: 8px 0 0;
+}
+
+.product-stars .mf-svg {
+    width: 14px;
+    height: 14px;
+    opacity: 0.72;
+}
+
+.product-stars .product-star-muted {
+    opacity: 0.18;
+}
+
+.product-shelf-card .product-actions {
+    display: none;
+    position: absolute;
+    inset: auto 10px 10px;
+    z-index: 4;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 0;
+    border-top: 0;
+}
+
+.product-shelf-card:hover .product-actions,
+.product-shelf-card:focus-within .product-actions {
+    display: grid;
+}
+
+.product-shelf-card .product-actions .button {
+    min-height: 36px;
+    border-radius: 18px;
+    font-size: 13px;
+}
+
+@media (min-width: 1200px) {
+    .product-shelf-grid {
+        grid-template-columns: repeat(5, minmax(148px, 1fr));
+        max-width: 920px;
+    }
+}
+
+@media (max-width: 640px) {
+    .product-shelf-grid {
+        grid-template-columns: repeat(2, minmax(138px, 1fr));
+        gap: 14px;
+    }
+
+    .product-shelf-card {
+        min-height: 220px;
+    }
+}

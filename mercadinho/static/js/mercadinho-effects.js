@@ -584,6 +584,17 @@
         });
     }
 
+    function decorateProductShelf() {
+        document.querySelectorAll("[data-product-art]").forEach(function (slot) {
+            if (slot.dataset.ready) {
+                return;
+            }
+            var productName = slot.dataset.productArt || "";
+            slot.innerHTML = svgIcon(productIconName(productName), "mf-product-card-svg");
+            slot.dataset.ready = "true";
+        });
+    }
+
     function handleClientEvents() {
         var seen = readJsonStore("mercadinho-client-events");
         document.querySelectorAll("[data-client-event]").forEach(function (eventItem) {
@@ -809,6 +820,7 @@
     function init() {
         getRoot();
         addGlobalInteractions();
+        decorateProductShelf();
         decorateClientCards();
         decorateConversation();
         handleClientEvents();
@@ -822,6 +834,7 @@
         celebration: celebration,
         confetti: confetti,
         decorateClientCards: decorateClientCards,
+        decorateProductShelf: decorateProductShelf,
         shake: shake,
         sound: sound,
         stars: stars,

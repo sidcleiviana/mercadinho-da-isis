@@ -1,15 +1,16 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Produtos | Mercadinho da Ísis{% endblock %}
 
 {% block content %}
 <section class="page-header page-header-actions">
     <div>
-        <p class="eyebrow">Produtos</p>
-        <h1>Produtos</h1>
-        <p>Consulte produtos por nome ou codigo de barras.</p>
+        <p class="eyebrow">Prateleira do Mercadinho</p>
+        <h1>Nossos Produtos</h1>
+        <p>Escolha uma categoria ou pesquise pelo nome e código de barras.</p>
     </div>
-    <a class="button button-primary" href="{% url 'produtos:criar' %}">Novo Produto</a>
+    <a class="button button-primary" href="{% url 'produtos:criar' %}"><svg class="mf-svg mf-button-icon"><use href="{% static 'img/mercadinho-feliz.svg' %}#basket"></use></svg>Novo Produto</a>
 </section>
 
 {% if messages %}
@@ -20,29 +21,51 @@
     </div>
 {% endif %}
 
-<form class="search-form" method="get">
-    <label for="busca">Pesquisar</label>
-    <div class="search-row">
-        <input id="busca" name="q" type="search" value="{{ termo_busca }}" placeholder="Nome ou codigo de barras">
-        <button class="button button-secondary" type="submit">Buscar</button>
-        {% if termo_busca %}
-            <a class="button button-quiet" href="{% url 'produtos:lista' %}">Limpar</a>
+<section class="product-shelf-tools" aria-label="Filtros de produtos">
+    <nav class="product-category-pills" aria-label="Categorias">
+        <a class="product-pill product-pill-all {% if not categoria_atual %}active{% endif %}" href="{% url 'produtos:lista' %}{% if termo_busca %}?q={{ termo_busca }}{% endif %}">Todos</a>
+        {% for categoria in categorias %}
+            <a class="product-pill product-pill-{{ forloop.counter }} {% if categoria_atual == categoria.id|stringformat:'s' %}active{% endif %}" href="?categoria={{ categoria.id }}{% if termo_busca %}&q={{ termo_busca }}{% endif %}">{{ categoria.nome }}</a>
+        {% endfor %}
+    </nav>
+
+    <form class="search-form product-search-form" method="get">
+        {% if categoria_atual %}
+            <input type="hidden" name="categoria" value="{{ categoria_atual }}">
         {% endif %}
-    </div>
-</form>
+        <label for="busca">Pesquisar</label>
+        <div class="search-row">
+            <input id="busca" name="q" type="search" value="{{ termo_busca }}" placeholder="Nome ou código de barras">
+            <button class="button button-secondary" type="submit">Buscar</button>
+            {% if termo_busca or categoria_atual %}
+                <a class="button button-quiet" href="{% url 'produtos:lista' %}">Limpar</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
 
 {% if produtos %}
-    <section class="product-grid" aria-label="Lista de produtos">
+    <section class="product-grid product-shelf-grid" aria-label="Lista de produtos">
         {% for produto in produtos %}
-            <article class="product-card">
-                <a class="product-image-link" href="{% url 'produtos:detalhe' produto.pk %}">
-                    <img class="product-image" src="{{ produto.foto.url }}" alt="Foto de {{ produto.nome }}">
+            <article class="product-card product-shelf-card" data-product-name="{{ produto.nome }}" data-product-category="{{ produto.categoria.nome }}">
+                <a class="product-shelf-art" href="{% url 'produtos:detalhe' produto.pk %}" aria-label="Ver {{ produto.nome }}">
+                    <span class="product-stock-badge">
+                        {% if produto.estoque %}{{ produto.estoque.quantidade_atual }}{% else %}0{% endif %}
+                    </span>
+                    <span class="product-illustration-slot" data-product-art="{{ produto.nome }}"></span>
                 </a>
                 <div class="product-card-body">
                     <h2>{{ produto.nome }}</h2>
                     <p class="product-price">R$ {{ produto.preco_venda }}</p>
                     <p class="product-meta">{{ produto.categoria.nome }}</p>
                     <p class="product-code">{{ produto.codigo_barras }}</p>
+                    <p class="product-stars" aria-hidden="true">
+                        <svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#star"></use></svg>
+                        <svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#star"></use></svg>
+                        <svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#star"></use></svg>
+                        <svg class="mf-svg product-star-muted"><use href="{% static 'img/mercadinho-feliz.svg' %}#star"></use></svg>
+                        <svg class="mf-svg product-star-muted"><use href="{% static 'img/mercadinho-feliz.svg' %}#star"></use></svg>
+                    </p>
                 </div>
                 <div class="product-actions">
                     <a class="button button-secondary" href="{% url 'produtos:detalhe' produto.pk %}">Ver</a>

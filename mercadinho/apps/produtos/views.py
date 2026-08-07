@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from .forms import ProdutoForm
-from .models import Produto
+from .models import Categoria, Produto
 
 
 class ProdutoListView(ListView):
@@ -14,17 +14,22 @@ class ProdutoListView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        queryset = Produto.objects.select_related("categoria").order_by("nome")
+        queryset = Produto.objects.select_related("categoria", "estoque").order_by("nome")
         termo = self.request.GET.get("q", "").strip()
+        categoria_id = self.request.GET.get("categoria", "").strip()
         if termo:
             queryset = queryset.filter(
                 Q(nome__icontains=termo) | Q(codigo_barras__icontains=termo)
             )
+        if categoria_id.isdigit():
+            queryset = queryset.filter(categoria_id=categoria_id)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["termo_busca"] = self.request.GET.get("q", "").strip()
+        context["categoria_atual"] = self.request.GET.get("categoria", "").strip()
+        context["categorias"] = Categoria.objects.order_by("ordem_exibicao", "nome")
         return context
 
 
