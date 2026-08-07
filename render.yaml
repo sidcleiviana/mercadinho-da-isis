@@ -2,6 +2,7 @@ services:
   - type: web
     name: mercadinho-da-isis
     runtime: python
+    plan: free
     rootDir: mercadinho
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
     startCommand: gunicorn mercadinho.wsgi:application
@@ -23,5 +24,6 @@ services:
 
 databases:
   - name: mercadinho-da-isis-db
+    plan: free
     databaseName: mercadinho
     user: mercadinho
