@@ -8,37 +8,37 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=mercadinho-feliz-3">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=mercadinho-feliz-4">
 </head>
 <body>
     <header class="topbar">
         <div class="brand">
-            <span class="brand-mark" aria-hidden="true">🛒</span>
+            <span class="brand-mark" aria-hidden="true"><svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#cart"></use></svg></span>
             <div>
                 <strong>Mercadinho da Ísis</strong>
                 <span>Hoje a dona do mercado está no comando</span>
             </div>
         </div>
         <div class="topbar-meta">
-            <span class="topbar-pill">🌈 Loja aberta para brincar</span>
+            <span class="topbar-pill"><svg class="mf-svg mf-text-icon"><use href="{% static 'img/mercadinho-feliz.svg' %}#sparkle"></use></svg>Loja aberta para brincar</span>
             {% if request.user.is_authenticated %}
                 <span>{{ request.user.get_username }}</span>
             {% else %}
-                <a href="{% url 'admin:login' %}">Entrar ✨</a>
+                <a href="{% url 'admin:login' %}">Entrar <svg class="mf-svg mf-text-icon"><use href="{% static 'img/mercadinho-feliz.svg' %}#sparkle"></use></svg></a>
             {% endif %}
         </div>
     </header>
 
     <div class="app-shell">
         <nav class="sidebar" aria-label="Menu principal">
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'core' %}active{% endif %}" href="{% url 'core:dashboard' %}"><span class="nav-icon" aria-hidden="true">🏠</span>Início</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'produtos' %}active{% endif %}" href="{% url 'produtos:lista' %}"><span class="nav-icon" aria-hidden="true">🧺</span>Produtos</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'estoque' %}active{% endif %}" href="{% url 'estoque:lista' %}"><span class="nav-icon" aria-hidden="true">📦</span>Estoque</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'caixa' %}active{% endif %}" href="{% url 'caixa:dashboard' %}"><span class="nav-icon" aria-hidden="true">💰</span>Cofrinho</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'vendas' %}active{% endif %}" href="{% url 'vendas:lista' %}"><span class="nav-icon" aria-hidden="true">🧾</span>Vendas</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'clientes' %}active{% endif %}" href="{% url 'clientes:fluxo' %}" data-nav-atendimento><span class="nav-icon" aria-hidden="true">😊</span>Atendimentos</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'relatorios' %}active{% endif %}" href="{% url 'relatorios:resumo' %}"><span class="nav-icon" aria-hidden="true">⭐</span>Relatórios</a>
-            <span class="sidebar-link disabled"><span class="nav-icon" aria-hidden="true">🎀</span>Configurações</span>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'core' %}active{% endif %}" href="{% url 'core:dashboard' %}"><span class="nav-icon" aria-hidden="true"><svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#store"></use></svg></span>Início</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'produtos' %}active{% endif %}" href="{% url 'produtos:lista' %}"><span class="nav-icon" aria-hidden="true"><svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#basket"></use></svg></span>Produtos</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'estoque' %}active{% endif %}" href="{% url 'estoque:lista' %}"><span class="nav-icon" aria-hidden="true"><svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#box"></use></svg></span>Estoque</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'caixa' %}active{% endif %}" href="{% url 'caixa:dashboard' %}"><span class="nav-icon" aria-hidden="true"><svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#piggy"></use></svg></span>Cofrinho</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'vendas' %}active{% endif %}" href="{% url 'vendas:lista' %}"><span class="nav-icon" aria-hidden="true"><svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#receipt"></use></svg></span>Vendas</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'clientes' %}active{% endif %}" href="{% url 'clientes:fluxo' %}" data-nav-atendimento><span class="nav-icon" aria-hidden="true"><svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#chat"></use></svg></span>Atendimentos</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'relatorios' %}active{% endif %}" href="{% url 'relatorios:resumo' %}"><span class="nav-icon" aria-hidden="true"><svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#star"></use></svg></span>Relatórios</a>
+            <span class="sidebar-link disabled"><span class="nav-icon" aria-hidden="true"><svg class="mf-svg"><use href="{% static 'img/mercadinho-feliz.svg' %}#gift"></use></svg></span>Configurações</span>
         </nav>
 
         <main class="content">
@@ -47,9 +47,10 @@
     </div>
 
     <footer class="statusbar">
-        <span>💖 Feito pelo Papai da Ísis, com amor, para guardar boas lembranças. 💖</span>
+        <span><svg class="mf-svg mf-text-icon"><use href="{% static 'img/mercadinho-feliz.svg' %}#heart"></use></svg>Feito pelo Papai da Ísis, com amor, para guardar boas lembranças.<svg class="mf-svg mf-text-icon"><use href="{% static 'img/mercadinho-feliz.svg' %}#heart"></use></svg></span>
     </footer>
     <div id="mercadinho-effects-root" aria-live="polite"></div>
-    <script src="{% static 'js/mercadinho-effects.js' %}?v=3" defer></script>
+    <script src="{% static 'js/mercadinho-illustrations.js' %}?v=1" data-sprite="{% static 'img/mercadinho-feliz.svg' %}" defer></script>
+    <script src="{% static 'js/mercadinho-effects.js' %}?v=4" defer></script>
 </body>
 </html>

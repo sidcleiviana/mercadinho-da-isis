@@ -13,12 +13,12 @@
     {% if expediente.status == "aberto" %}
         <form method="post" action="{% url 'core:fechar_expediente' %}">
             {% csrf_token %}
-            <button class="button button-secondary" type="submit">🌙 Fechar Mercado</button>
+            <button class="button button-secondary" type="submit"><svg class="mf-svg mf-button-icon"><use href="/static/img/mercadinho-feliz.svg#moon"></use></svg>Fechar Mercado</button>
         </form>
     {% else %}
         <form method="post" action="{% url 'core:abrir_expediente' %}">
             {% csrf_token %}
-            <button class="button button-primary" type="submit">🏪 Abrir Mercado</button>
+            <button class="button button-primary" type="submit"><svg class="mf-svg mf-button-icon"><use href="/static/img/mercadinho-feliz.svg#store"></use></svg>Abrir Mercado</button>
         </form>
     {% endif %}
 </section>

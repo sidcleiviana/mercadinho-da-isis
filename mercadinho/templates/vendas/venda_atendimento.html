@@ -139,7 +139,7 @@
         {% if venda.status == "em_andamento" %}
             <form method="post" action="{% url 'vendas:finalizar' venda.pk %}" data-payment-form data-sale-total="{{ venda.valor_total }}">
                 {% csrf_token %}
-                <button class="button button-primary" type="submit">🎉 Finalizar Venda</button>
+                <button class="button button-primary" type="submit"><svg class="mf-svg mf-button-icon"><use href="/static/img/mercadinho-feliz.svg#confetti"></use></svg>Finalizar Venda</button>
             </form>
             <form method="post" action="{% url 'vendas:cancelar' venda.pk %}">
                 {% csrf_token %}

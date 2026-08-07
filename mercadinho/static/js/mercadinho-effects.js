@@ -6,6 +6,7 @@
     var clientMemoryStore = "mercadinho-client-memory";
     var clientArrivalStore = "mercadinho-client-arrivals";
     var audioContext = null;
+    var Illustrations = window.MercadinhoIllustrations || null;
     var femaleNames = [
         "isis", "alice", "helena", "laura", "valentina", "sofia", "cecilia", "manuela",
         "luna", "liz", "beatriz", "julia", "maria", "heloisa", "clara", "elisa",
@@ -17,24 +18,16 @@
         "joaquim", "nicolas", "felipe", "daniel", "carlos", "joao", "gustavo"
     ];
     var characterProfiles = [
-        { emoji: "👧", gender: "female", title: "Menina sorridente", mood: "😊", color: "#ffc2e2" },
-        { emoji: "👧", gender: "female", title: "Menina de laço", mood: "😍", color: "#ffe4f1" },
-        { emoji: "👩", gender: "female", title: "Mamãe alegre", mood: "🥰", color: "#ffd1dc" },
-        { emoji: "👵", gender: "female", title: "Vovó simpática", mood: "🥰", color: "#fff0a8" },
-        { emoji: "👦", gender: "male", title: "Menino de boné", mood: "😄", color: "#a6e2fe" },
-        { emoji: "👦", gender: "male", title: "Menino curioso", mood: "🤔", color: "#b4f2d6" },
-        { emoji: "👨", gender: "male", title: "Papai alegre", mood: "😄", color: "#b8e8ff" },
-        { emoji: "👴", gender: "male", title: "Vovô gentil", mood: "😊", color: "#e8d5ff" },
-        { emoji: "🧒", gender: "any", title: "Criança curiosa", mood: "🤔", color: "#b4f2d6" },
-        { emoji: "🧑‍🍳", gender: "any", title: "Cozinheiro", mood: "😋", color: "#ffe0b5" },
-        { emoji: "🦸", gender: "any", title: "Super-herói", mood: "🥳", color: "#d5c7ff" },
-        { emoji: "🧙", gender: "any", title: "Mago", mood: "😲", color: "#d9c2ff" },
-        { emoji: "🧸", gender: "any", title: "Ursinho", mood: "🥰", color: "#f6d7b8" },
-        { emoji: "🐼", gender: "any", title: "Panda", mood: "😊", color: "#e5e7eb" },
-        { emoji: "🐱", gender: "any", title: "Gatinho", mood: "😺", color: "#ffd6a5" },
-        { emoji: "🐰", gender: "any", title: "Coelhinho", mood: "😍", color: "#ffe4f1" },
-        { emoji: "🐶", gender: "any", title: "Cachorrinho", mood: "😄", color: "#d8b894" },
-        { emoji: "🐸", gender: "any", title: "Sapinho", mood: "🤗", color: "#b4f2d6" }
+        { gender: "female", title: "Menina sorridente", expression: "happy", age: "child", color: "#ffc2e2" },
+        { gender: "female", title: "Menina de laço", expression: "loved", age: "child", color: "#ffe4f1" },
+        { gender: "female", title: "Mamãe alegre", expression: "happy", age: "adult", color: "#ffd1dc" },
+        { gender: "female", title: "Vovó simpática", expression: "loved", age: "grand", color: "#fff0a8" },
+        { gender: "male", title: "Menino de boné", expression: "happy", age: "child", color: "#a6e2fe" },
+        { gender: "male", title: "Menino curioso", expression: "thinking", age: "child", color: "#b4f2d6" },
+        { gender: "male", title: "Papai alegre", expression: "happy", age: "adult", color: "#b8e8ff" },
+        { gender: "male", title: "Vovô gentil", expression: "happy", age: "grand", color: "#e8d5ff" },
+        { gender: "any", title: "Bebê curioso", expression: "surprised", age: "baby", color: "#fff0a8" },
+        { gender: "any", title: "Adolescente animado", expression: "celebrating", age: "teen", color: "#d5c7ff" }
     ];
     var personalityLines = [
         "Que mercadinho bonito!",
@@ -138,6 +131,13 @@
         return el;
     }
 
+    function svgIcon(name, className, title) {
+        if (Illustrations && Illustrations.icon) {
+            return Illustrations.icon(name, className || "", title || "");
+        }
+        return "";
+    }
+
     function toast(message, type) {
         var item = makeEl("div", "mf-toast mf-toast-" + (type || "success"));
         item.textContent = message;
@@ -151,12 +151,26 @@
         return item;
     }
 
+    function toastIcon(iconName, message, type) {
+        var item = makeEl("div", "mf-toast mf-toast-" + (type || "success"));
+        item.innerHTML = svgIcon(iconName, "mf-toast-icon") + '<span>' + message + "</span>";
+        getRoot().appendChild(item);
+        window.setTimeout(function () {
+            item.classList.add("mf-leaving");
+            window.setTimeout(function () {
+                item.remove();
+            }, 280);
+        }, 2300);
+        return item;
+    }
+
     function confetti(count) {
         var box = makeEl("div", "mf-confetti", "");
-        var emojis = ["⭐", "✨", "🎉", "💖", "🌈", "🍭"];
+        var icons = ["star", "sparkle", "confetti", "heart", "gift", "medal"];
         var total = count || 44;
         for (var i = 0; i < total; i += 1) {
-            var piece = makeEl("span", "mf-confetti-piece", emojis[i % emojis.length]);
+            var piece = makeEl("span", "mf-confetti-piece", "");
+            piece.innerHTML = svgIcon(icons[i % icons.length], "mf-confetti-svg");
             piece.style.setProperty("--x", Math.round(Math.random() * 100) + "vw");
             piece.style.setProperty("--delay", (Math.random() * 0.35).toFixed(2) + "s");
             piece.style.setProperty("--spin", Math.round(Math.random() * 260 - 130) + "deg");
@@ -171,7 +185,8 @@
     function stars(target) {
         var host = target || getRoot();
         for (var i = 0; i < 8; i += 1) {
-            var star = makeEl("span", "mf-star", i % 2 ? "✨" : "⭐");
+            var star = makeEl("span", "mf-star", "");
+            star.innerHTML = svgIcon(i % 2 ? "sparkle" : "star", "mf-star-svg");
             star.style.setProperty("--left", Math.round(10 + Math.random() * 80) + "%");
             star.style.setProperty("--top", Math.round(10 + Math.random() * 72) + "%");
             host.appendChild(star);
@@ -222,7 +237,7 @@
         saveAchievements(done);
         sound("fanfare");
         var card = makeEl("div", "mf-achievement");
-        card.innerHTML = '<span class="mf-achievement-medal">🏅</span><strong>Conquista desbloqueada!</strong><p>' + label + "</p>";
+        card.innerHTML = '<span class="mf-achievement-medal">' + svgIcon("medal", "mf-achievement-svg") + "</span><strong>Conquista desbloqueada!</strong><p>" + label + "</p>";
         getRoot().appendChild(card);
         window.setTimeout(function () {
             card.classList.add("mf-leaving");
@@ -238,10 +253,10 @@
         var overlay = makeEl("div", "mf-celebration");
         overlay.innerHTML =
             '<div class="mf-celebration-card">' +
-            '<div class="mf-celebration-icon">🎉</div>' +
+            '<div class="mf-celebration-icon">' + svgIcon("confetti", "mf-celebration-svg") + "</div>" +
             "<h2>" + title + "</h2>" +
             "<p>" + subtitle + "</p>" +
-            '<div class="mf-rating">⭐⭐⭐⭐⭐</div>' +
+            '<div class="mf-rating">' + svgIcon("star", "mf-rating-svg") + svgIcon("star", "mf-rating-svg") + svgIcon("star", "mf-rating-svg") + svgIcon("star", "mf-rating-svg") + svgIcon("star", "mf-rating-svg") + "</div>" +
             "</div>";
         getRoot().appendChild(overlay);
         stars(overlay);
@@ -253,21 +268,11 @@
         }, 2200);
     }
 
-    function productEmoji(name) {
-        var value = normalize(name);
-        if (value.indexOf("maca") >= 0 || value.indexOf("banana") >= 0 || value.indexOf("fruta") >= 0) {
-            return "🍎";
+    function productIconName(name) {
+        if (Illustrations && Illustrations.productIconName) {
+            return Illustrations.productIconName(name);
         }
-        if (value.indexOf("chocolate") >= 0 || value.indexOf("doce") >= 0 || value.indexOf("bala") >= 0) {
-            return "🍫";
-        }
-        if (value.indexOf("leite") >= 0 || value.indexOf("iogurte") >= 0) {
-            return "🥛";
-        }
-        if (value.indexOf("arroz") >= 0 || value.indexOf("feijao") >= 0) {
-            return "🛒";
-        }
-        return "✨";
+        return "basket";
     }
 
     function hashText(text) {
@@ -325,18 +330,18 @@
         var profile = profiles[seed % profiles.length];
         var shirtColors = ["#ffc2e2", "#a6e2fe", "#fff0a8", "#b4f2d6", "#e8d5ff", "#ffd6a5", "#ffb3c7", "#c7f9cc"];
         var hairColors = ["#6b3f2f", "#2f241f", "#9a6a3a", "#f2c078", "#5b4b8a", "#7f4f6b"];
-        var accessories = ["🎀", "🧢", "🕶️", "🎒", "⭐", "🌈", ""];
+        var accessories = ["bow", "cap", "glasses", "bag", ""];
         var accessory = accessories[(seed + 3) % accessories.length];
         if (gender === "female" && seed % 3 === 0) {
-            accessory = "🎀";
+            accessory = "bow";
         }
         if (gender === "male" && seed % 3 === 0) {
-            accessory = "🧢";
+            accessory = "cap";
         }
         return {
-            emoji: profile.emoji,
             title: profile.title,
-            mood: profile.mood,
+            expression: profile.expression,
+            age: profile.age,
             color: profile.color,
             shirt: shirtColors[seed % shirtColors.length],
             accent: shirtColors[(seed + 2) % shirtColors.length],
@@ -367,51 +372,50 @@
 
     function clientAvatar(name, id, status, size) {
         var profile = profileForClient(name, id);
-        var mood = profile.mood;
+        var expression = profile.expression;
         if (status === "em_atendimento") {
-            mood = "😊";
+            expression = "happy";
         } else if (status === "finalizado") {
-            mood = "🥳";
+            expression = "celebrating";
         } else if (status === "desistiu") {
-            mood = "👋";
+            expression = "waving";
         }
-        return (
-            '<span class="mf-client-avatar mf-client-avatar-' + (size || "normal") + '" style="--avatar-bg:' + profile.color + '; --avatar-shirt:' + profile.shirt + '; --avatar-accent:' + profile.accent + '">' +
-            '<span class="mf-client-shadow"></span>' +
-            '<span class="mf-client-body">' +
-            '<span class="mf-client-hair" style="--avatar-hair:' + profile.hair + '" aria-hidden="true"></span>' +
-            '<span class="mf-client-accessory" aria-hidden="true">' + profile.accessory + '</span>' +
-            '<span class="mf-client-emoji">' + profile.emoji + '</span>' +
-            '<span class="mf-client-blink" aria-hidden="true"></span>' +
-            '<span class="mf-client-smile" aria-hidden="true">' + mood + '</span>' +
-            '</span>' +
-            '<span class="mf-client-shirt"></span>' +
-            '</span>'
-        );
+        if (Illustrations && Illustrations.character) {
+            return '<span class="mf-client-avatar mf-client-avatar-' + (size || "normal") + '">' + Illustrations.character({
+                accent: profile.accent,
+                accessory: profile.accessory,
+                age: profile.age,
+                expression: expression,
+                hair: profile.hair,
+                shirt: profile.shirt,
+                skin: profile.color
+            }) + "</span>";
+        }
+        return '<span class="mf-client-avatar mf-client-avatar-' + (size || "normal") + '"></span>';
     }
 
     function waitBubbleText(name, status, enteredAt) {
         var memory = getClientMemory(name);
         var profile = profileForClient(name, name);
         if (status === "em_atendimento") {
-            return "😊 Estou escolhendo meus produtos!";
+            return "Estou escolhendo meus produtos!";
         }
         if (memory.visits > 0 && memory.lastProduct) {
-            return "😊 Oi! Voltei! Gostei de " + memory.lastProduct + " da última vez!";
+            return "Oi! Voltei! Gostei de " + memory.lastProduct + " da última vez!";
         }
         if (memory.visits > 0) {
-            return "🐼 Lembra de mim? Vim fazer compras de novo!";
+            return "Lembra de mim? Vim fazer compras de novo!";
         }
         if (enteredAt) {
             var entered = new Date(enteredAt);
             if (!Number.isNaN(entered.getTime())) {
                 var minutes = Math.max(0, Math.floor((Date.now() - entered.getTime()) / 60000));
                 if (minutes >= 2) {
-                    return "😴 Estou esperando faz " + minutes + " minutinhos...";
+                    return "Estou esperando faz " + minutes + " minutinhos...";
                 }
             }
         }
-        return profile.mood + " " + profile.personality;
+        return profile.personality;
     }
 
     function extractClientName(text) {
@@ -456,11 +460,11 @@
         var profile = profileForClient(name, id);
         var memory = getClientMemory(name);
         var message = memory.visits > 0 && memory.lastProduct
-            ? profile.mood + " " + name + " voltou! Gostou de " + memory.lastProduct + " da última vez."
-            : profile.mood + " " + name + " quer fazer compras!";
+            ? name + " voltou! Gostou de " + memory.lastProduct + " da última vez."
+            : name + " quer fazer compras!";
 
         sound("bell");
-        toast("🔔 Novo cliente chegou! " + message, "success");
+        toastIcon("chat", "Novo cliente chegou! " + message, "success");
         card.classList.add("mf-client-walk-in");
         updateNavBadge(document.querySelectorAll(".client-card-waiting").length);
     }
@@ -510,7 +514,7 @@
         var productMatch = text.match(/de\s+(.+?)\.?$/i);
         var product = productMatch ? productMatch[1].replace(/\.$/, "") : "";
         if (origin === "sistema" && value.indexOf("cliente pede") >= 0 && product) {
-            return "Oi! Hoje quero comprar " + productEmoji(product) + " " + product + "!";
+            return "Oi! Hoje quero comprar " + product + "!";
         }
         if (origin === "sistema" && value.indexOf("produto adicionado") >= 0) {
             return "Que legal! Esse produto entrou na minha comprinha.";
@@ -553,13 +557,18 @@
             var origin = message.dataset.chatOrigin || "";
             var textSpan = message.querySelector("span");
             var original = message.dataset.chatText || (textSpan ? textSpan.textContent : "");
-            var face = origin === "operadora" ? "🧒" : profileForClient(name, id).mood;
-            var typing = makeEl("span", "mf-typing", "💬 ...");
+            var faceIcon = origin === "operadora"
+                ? svgIcon("chat", "mf-chat-face-svg")
+                : clientAvatar(name, id, status, "mini");
+            var typing = makeEl("span", "mf-typing", "");
+            typing.innerHTML = svgIcon("chat", "mf-typing-svg") + "<span>...</span>";
             typing.style.setProperty("--delay", (index * 120) + "ms");
             message.parentNode.insertBefore(typing, message);
             message.classList.add("mf-chat-bubble", origin === "operadora" ? "mf-chat-operator" : "mf-chat-client");
             message.style.setProperty("--delay", (index * 120 + 180) + "ms");
-            message.insertBefore(makeEl("span", "mf-chat-face", face), message.firstChild);
+            var face = makeEl("span", "mf-chat-face", "");
+            face.innerHTML = faceIcon;
+            message.insertBefore(face, message.firstChild);
             if (textSpan) {
                 textSpan.textContent = friendlyChatText(original, origin);
             }
@@ -570,7 +579,7 @@
                 return;
             }
             var nameValue = item.dataset.productRequest || item.textContent.trim();
-            item.insertAdjacentHTML("afterbegin", '<span class="mf-product-illustration">' + productEmoji(nameValue) + "</span>");
+            item.insertAdjacentHTML("afterbegin", '<span class="mf-product-illustration">' + svgIcon(productIconName(nameValue), "mf-product-svg") + "</span>");
             item.dataset.ready = "true";
         });
     }
@@ -592,7 +601,7 @@
             if ((value.indexOf("comprou") >= 0 || value.indexOf("finalizou uma compra") >= 0 || value.indexOf("saiu feliz") >= 0 || value.indexOf("levou") >= 0) && name) {
                 var productHint = "produtos";
                 rememberClient(name, productHint);
-                toast("🥳 " + name + " comemorou a compra!", "success");
+                toastIcon("confetti", name + " comemorou a compra!", "success");
                 confetti(24);
             }
             if ((value.indexOf("foi atendido") >= 0 || value.indexOf("desistiu") >= 0 || value.indexOf("foi embora") >= 0 || value.indexOf("voltou outro dia") >= 0) && name) {
@@ -632,14 +641,14 @@
     function paymentSuccess(modal, form, title, subtitle, total) {
         var body = modal.querySelector(".mf-payment-body");
         body.innerHTML =
-            '<div class="mf-approved">✔</div>' +
+            '<div class="mf-approved">' + svgIcon("check", "mf-approved-svg") + "</div>" +
             "<h3>" + title + "</h3>" +
             "<p>" + subtitle + "</p>";
         sound("cash");
         confetti(60);
         stars(modal);
         if (total >= 50) {
-            toast("🎉 UAU! Essa foi uma compra enorme! ⭐ +50 moedas", "success");
+            toastIcon("trophy", "UAU! Essa foi uma compra enorme! +50 moedas", "success");
         }
         window.setTimeout(function () {
             closeModal(modal);
@@ -651,9 +660,9 @@
         var body = modal.querySelector(".mf-payment-body");
         var seconds = 15;
         body.innerHTML =
-            '<div class="mf-pay-icon">📱</div>' +
+            '<div class="mf-pay-icon">' + svgIcon("phone", "mf-pay-svg") + "</div>" +
             "<h3>Abra a câmera do seu celular e leia o QR Code.</h3>" +
-            '<div class="mf-qr" aria-label="QR Code de brincadeira"></div>' +
+            '<div class="mf-qr" aria-label="QR Code de brincadeira">' + svgIcon("qr", "mf-qr-svg") + "</div>" +
             '<strong class="mf-countdown">' + seconds + "...</strong>";
         var countdown = body.querySelector(".mf-countdown");
         var timer = window.setInterval(function () {
@@ -670,9 +679,9 @@
         var body = modal.querySelector(".mf-payment-body");
         body.innerHTML =
             '<div class="mf-card-machine">' +
-            '<span class="mf-card-emoji">💳</span>' +
+            '<span class="mf-card-emoji">' + svgIcon("payment-card", "mf-card-svg") + "</span>" +
             '<span class="mf-card-line"></span>' +
-            '<span class="mf-machine">▣</span>' +
+            '<span class="mf-machine">' + svgIcon("card-machine", "mf-machine-svg") + "</span>" +
             "</div>" +
             "<h3>Passando o cartão...</h3>";
         window.setTimeout(function () {
@@ -687,7 +696,7 @@
     function cashFlow(modal, form, total) {
         var body = modal.querySelector(".mf-payment-body");
         body.innerHTML =
-            '<div class="mf-money-rain"><span>💵</span><span>💵</span><span>💵</span><span>💵</span><strong>💰</strong></div>' +
+            '<div class="mf-money-rain"><span>' + svgIcon("cash", "mf-money-svg") + "</span><span>" + svgIcon("cash", "mf-money-svg") + "</span><span>" + svgIcon("cash", "mf-money-svg") + "</span><span>" + svgIcon("cash", "mf-money-svg") + "</span><strong>" + svgIcon("piggy", "mf-piggy-svg") + "</strong></div>" +
             "<h3>Recebendo o dinheiro...</h3>";
         window.setTimeout(function () {
             paymentSuccess(modal, form, "Pagamento recebido.", "Obrigado!", total);
@@ -701,12 +710,12 @@
             '<section class="mf-payment-card" role="dialog" aria-modal="true" aria-label="Escolher pagamento">' +
             '<button class="mf-payment-close" type="button" aria-label="Fechar">×</button>' +
             '<div class="mf-payment-body">' +
-            '<div class="mf-pay-icon">🎉</div>' +
+            '<div class="mf-pay-icon">' + svgIcon("confetti", "mf-pay-svg") + "</div>" +
             "<h2>Como o cliente vai pagar?</h2>" +
             '<div class="mf-payment-options">' +
-            '<button type="button" data-pay="cash"><span>💵</span>Dinheiro</button>' +
-            '<button type="button" data-pay="card"><span>💳</span>Cartão</button>' +
-            '<button type="button" data-pay="pix"><span>📱</span>PIX</button>' +
+            '<button type="button" data-pay="cash"><span>' + svgIcon("cash", "mf-payment-option-svg") + "</span>Dinheiro</button>" +
+            '<button type="button" data-pay="card"><span>' + svgIcon("card-machine", "mf-payment-option-svg") + "</span>Cartão</button>" +
+            '<button type="button" data-pay="pix"><span>' + svgIcon("qr", "mf-payment-option-svg") + "</span>PIX</button>" +
             "</div>" +
             "</div>" +
             "</section>";
@@ -743,7 +752,7 @@
             var value = normalize(text);
             if (message.classList.contains("message-error")) {
                 sound("error");
-                toast("⚠️ Ops! " + text, "error");
+                toastIcon("warning", "Ops! " + text, "error");
                 shake(document.querySelector(".barcode-panel") || message);
                 return;
             }
@@ -754,29 +763,29 @@
 
             if (value.indexOf("produto adicionado") >= 0) {
                 var productName = lastProductName();
-                var emoji = productEmoji(productName);
+                var iconName = productIconName(productName);
                 sound("scanner");
                 window.setTimeout(function () {
                     sound("success");
                 }, 110);
-                toast(emoji + " " + productName + " adicionado! ✨ +1 produto", "success");
+                toastIcon(iconName, productName + " adicionado! +1 produto", "success");
                 bounce(document.querySelector(".sale-items-panel tbody tr:last-child") || document.querySelector(".sale-items-panel"));
             } else if (value.indexOf("venda concluida") >= 0) {
-                achievement("primeira-venda", "🥇 Primeira venda");
-                celebration("Compra Finalizada!", "Cliente muito feliz! 💰 Caixa atualizado");
+                achievement("primeira-venda", "Primeira venda");
+                celebration("Compra Finalizada!", "Cliente muito feliz! Caixa atualizado");
             } else if (value.indexOf("expediente aberto") >= 0 || value.indexOf("expediente iniciado") >= 0) {
                 sound("fanfare");
-                toast("🏪 Mercado aberto! Boa brincadeira!", "success");
-                achievement("mercado-aberto", "🏪 Mercado aberto");
+                toastIcon("store", "Mercado aberto! Boa brincadeira!", "success");
+                achievement("mercado-aberto", "Mercado aberto");
             } else if (value.indexOf("expediente fechado") >= 0 || value.indexOf("expediente encerrado") >= 0) {
                 sound("success");
-                toast("🌙 Mercado fechado. Até a próxima venda!", "success");
+                toastIcon("moon", "Mercado fechado. Até a próxima venda!", "success");
             } else if (value.indexOf("atendimento") >= 0 || value.indexOf("cliente") >= 0) {
                 sound("bell");
-                toast("😊 Cliente feliz! Continue assim!", "success");
+                toastIcon("chat", "Cliente feliz! Continue assim!", "success");
             } else {
                 sound("success");
-                toast("🌈 Muito bem!", "success");
+                toastIcon("sparkle", "Muito bem!", "success");
             }
         });
     }

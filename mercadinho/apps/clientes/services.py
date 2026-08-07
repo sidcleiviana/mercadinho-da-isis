@@ -83,50 +83,50 @@ NOMES_MENINOS = [
 NOMES_INICIAIS = NOMES_MENINAS + NOMES_MENINOS
 
 MENSAGENS_CHEGADA = [
-    "😊 {nome} acabou de entrar no mercadinho.",
-    "🛒 {nome} está procurando produtos.",
-    "🍫 {nome} veio comprar doces.",
-    "🍎 {nome} entrou na fila.",
-    "🧸 {nome} está esperando atendimento.",
-    "🚗 {nome} quer comprar um carrinho.",
-    "🥛 {nome} está escolhendo produtos.",
-    "🎈 {nome} acabou de chegar.",
-    "🛍️ {nome} entrou no mercado.",
-    "✨ {nome} veio conhecer o mercadinho.",
+    "{nome} acabou de entrar no mercadinho.",
+    "{nome} está procurando produtos.",
+    "{nome} veio comprar doces.",
+    "{nome} entrou na fila.",
+    "{nome} está esperando atendimento.",
+    "{nome} quer comprar um carrinho.",
+    "{nome} está escolhendo produtos.",
+    "{nome} acabou de chegar.",
+    "{nome} entrou no mercado.",
+    "{nome} veio conhecer o mercadinho.",
 ]
 
 MENSAGENS_ATENDIMENTO = [
-    "😊 {nome} está no balcão escolhendo produtos.",
-    "💬 {nome} começou a conversar no atendimento.",
-    "🧾 {nome} está fazendo uma comprinha.",
-    "🌈 {nome} foi chamado para o atendimento.",
+    "{nome} está no balcão escolhendo produtos.",
+    "{nome} começou a conversar no atendimento.",
+    "{nome} está fazendo uma comprinha.",
+    "{nome} foi chamado para o atendimento.",
 ]
 
 MENSAGENS_DESISTENCIA = [
-    "👋 {nome} foi embora depois de esperar um pouco.",
-    "😴 {nome} esperou bastante e saiu da fila.",
-    "🎈 {nome} decidiu voltar outro dia.",
-    "💬 {nome} desistiu após tempo de espera.",
+    "{nome} foi embora depois de esperar um pouco.",
+    "{nome} esperou bastante e saiu da fila.",
+    "{nome} decidiu voltar outro dia.",
+    "{nome} desistiu após tempo de espera.",
 ]
 
 MENSAGENS_CANCELAMENTO = [
-    "👋 {nome} saiu do atendimento e foi embora.",
-    "🎈 {nome} decidiu voltar mais tarde.",
-    "💬 {nome} encerrou o atendimento sem compra.",
+    "{nome} saiu do atendimento e foi embora.",
+    "{nome} decidiu voltar mais tarde.",
+    "{nome} encerrou o atendimento sem compra.",
 ]
 
 MENSAGENS_ATENDIDO = [
-    "🥳 {nome} terminou a compra feliz.",
-    "🎉 {nome} foi atendido com carinho.",
-    "🛍️ {nome} saiu com a comprinha pronta.",
-    "😊 {nome} adorou o atendimento.",
+    "{nome} terminou a compra feliz.",
+    "{nome} foi atendido com carinho.",
+    "{nome} saiu com a comprinha pronta.",
+    "{nome} adorou o atendimento.",
 ]
 
 MENSAGENS_COMPRA = [
-    "🥳 {nome} comprou {quantidade} produto(s).",
-    "🎉 {nome} saiu feliz com {quantidade} produto(s).",
-    "🛍️ {nome} levou {quantidade} produto(s) do mercadinho.",
-    "💖 {nome} finalizou uma compra com {quantidade} produto(s).",
+    "{nome} comprou {quantidade} produto(s).",
+    "{nome} saiu feliz com {quantidade} produto(s).",
+    "{nome} levou {quantidade} produto(s) do mercadinho.",
+    "{nome} finalizou uma compra com {quantidade} produto(s).",
 ]
 
 

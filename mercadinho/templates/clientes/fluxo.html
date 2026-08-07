@@ -10,7 +10,7 @@
         <p>Expediente: {{ expediente.get_status_display }}. Quando alguém chegar, o mercadinho avisa com bastante alegria.</p>
     </div>
     {% if atendimento_atual and atendimento_atual.venda %}
-        <a class="button button-primary" href="{% url 'vendas:atendimento' atendimento_atual.venda.pk %}">💬 Continuar Atendimento</a>
+        <a class="button button-primary" href="{% url 'vendas:atendimento' atendimento_atual.venda.pk %}"><svg class="mf-svg mf-button-icon"><use href="/static/img/mercadinho-feliz.svg#chat"></use></svg>Continuar Atendimento</a>
     {% endif %}
 </section>
 
@@ -54,10 +54,10 @@
                 <span class="queue-status">{{ atendimento_atual.get_status_display }}</span>
             </div>
             <div class="action-row action-row-spaced">
-                <a class="button button-primary" href="{% url 'vendas:atendimento' atendimento_atual.venda.pk %}">🧾 Ir para venda</a>
+                <a class="button button-primary" href="{% url 'vendas:atendimento' atendimento_atual.venda.pk %}"><svg class="mf-svg mf-button-icon"><use href="/static/img/mercadinho-feliz.svg#receipt"></use></svg>Ir para venda</a>
                 <form method="post" action="{% url 'clientes:cancelar' atendimento_atual.pk %}">
                     {% csrf_token %}
-                    <button class="button button-secondary" type="submit">👋 Cliente foi embora</button>
+                    <button class="button button-secondary" type="submit"><svg class="mf-svg mf-button-icon"><use href="/static/img/mercadinho-feliz.svg#chat"></use></svg>Cliente foi embora</button>
                 </form>
             </div>
         {% else %}
@@ -82,7 +82,7 @@
                         {% else %}
                             <form method="post" action="{% url 'clientes:iniciar' atendimento.pk %}">
                                 {% csrf_token %}
-                                <button class="button button-primary" type="submit">😊 Atender</button>
+                                <button class="button button-primary" type="submit"><svg class="mf-svg mf-button-icon"><use href="/static/img/mercadinho-feliz.svg#chat"></use></svg>Atender</button>
                             </form>
                         {% endif %}
                     </article>

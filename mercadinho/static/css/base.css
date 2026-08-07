@@ -1603,7 +1603,11 @@ body::before {
     position: absolute;
     right: 24px;
     bottom: 12px;
-    content: "✨";
+    content: "";
+    width: 42px;
+    height: 42px;
+    border-radius: 18px;
+    background: radial-gradient(circle at 35% 35%, #fff0a8 0 28%, #ffc2e2 30% 62%, transparent 64%);
     font-size: 42px;
     opacity: 0.36;
     animation: mf-pulse 2.4s ease-in-out infinite;
@@ -1650,7 +1654,10 @@ body::before {
     position: absolute;
     right: 18px;
     bottom: 10px;
-    font-size: 42px;
+    width: 46px;
+    height: 46px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(255,255,255,.8), rgba(255,194,226,.62));
     opacity: 0.34;
     animation: mf-float 3s ease-in-out infinite;
 }
@@ -1660,7 +1667,7 @@ body::before {
 }
 
 .summary-card:nth-child(1)::after {
-    content: "🏪";
+    content: "";
 }
 
 .summary-card:nth-child(2) {
@@ -1668,7 +1675,7 @@ body::before {
 }
 
 .summary-card:nth-child(2)::after {
-    content: "💰";
+    content: "";
 }
 
 .summary-card:nth-child(3) {
@@ -1676,7 +1683,7 @@ body::before {
 }
 
 .summary-card:nth-child(3)::after {
-    content: "🧺";
+    content: "";
 }
 
 .summary-card:nth-child(4) {
@@ -1684,11 +1691,11 @@ body::before {
 }
 
 .summary-card:nth-child(4)::after {
-    content: "📦";
+    content: "";
 }
 
 .summary-card:nth-child(5)::after {
-    content: "😊";
+    content: "";
 }
 
 .summary-label {
@@ -1767,7 +1774,7 @@ textarea:focus {
 }
 
 .barcode-panel label::before {
-    content: "🔎 ";
+    content: "";
 }
 
 .product-card,
@@ -1787,13 +1794,13 @@ textarea:focus {
 }
 
 .product-card h2::before {
-    content: "🛍️ ";
+    content: "";
 }
 
 .product-price::before,
 .cash-balance-card strong::before,
 .sale-total-panel strong::before {
-    content: "💰 ";
+    content: "";
 }
 
 .inventory-quantity strong::after {
@@ -1812,7 +1819,7 @@ textarea:focus {
 }
 
 .message-success::before {
-    content: "🌈 ";
+    content: "";
 }
 
 .message-error {
@@ -1820,7 +1827,7 @@ textarea:focus {
 }
 
 .message-error::before {
-    content: "⚠️ ";
+    content: "";
 }
 
 .table-panel {
@@ -1850,7 +1857,7 @@ tbody tr:hover td {
 }
 
 .sale-total-panel::before {
-    content: "🧾";
+    content: "";
     width: 56px;
     height: 56px;
     display: inline-flex;
@@ -1858,7 +1865,7 @@ tbody tr:hover td {
     justify-content: center;
     border-radius: 22px;
     background: rgba(255, 255, 255, 0.76);
-    font-size: 30px;
+    background: linear-gradient(135deg, var(--isis-yellow), var(--isis-pink));
     box-shadow: inset 0 -3px 0 rgba(127, 79, 107, 0.08);
 }
 
@@ -1874,6 +1881,41 @@ tbody tr:hover td {
     justify-content: center;
     color: var(--isis-plum);
     font-weight: 800;
+}
+
+.mf-svg {
+    display: inline-block;
+    width: 1.35em;
+    height: 1.35em;
+    flex: 0 0 auto;
+    vertical-align: -0.28em;
+}
+
+.mf-text-icon,
+.mf-button-icon {
+    width: 1.4em;
+    height: 1.4em;
+    margin: 0 0.28em;
+}
+
+.mf-button-icon {
+    margin-left: 0;
+}
+
+.brand-mark .mf-svg {
+    width: 38px;
+    height: 38px;
+}
+
+.nav-icon .mf-svg {
+    width: 28px;
+    height: 28px;
+}
+
+.topbar-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .sr-only {
@@ -1911,6 +1953,17 @@ tbody tr:hover td {
     animation: mf-toast-in 260ms ease-out;
 }
 
+.mf-toast {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mf-toast-icon {
+    width: 44px;
+    height: 44px;
+}
+
 .mf-toast-error {
     background: linear-gradient(135deg, rgba(255, 194, 226, 0.96), rgba(255, 255, 255, 0.94));
     color: #9a2843;
@@ -1932,15 +1985,23 @@ tbody tr:hover td {
     position: fixed;
     top: -40px;
     left: var(--x);
-    font-size: 24px;
+    width: 26px;
+    height: 26px;
     animation: mf-confetti 2.8s ease-in var(--delay) forwards;
+}
+
+.mf-confetti-svg,
+.mf-star-svg {
+    width: 100%;
+    height: 100%;
 }
 
 .mf-star {
     position: absolute;
     left: var(--left);
     top: var(--top);
-    font-size: 28px;
+    width: 34px;
+    height: 34px;
     animation: mf-pop-star 1.2s ease-out forwards;
 }
 
@@ -1961,7 +2022,14 @@ tbody tr:hover td {
 .mf-achievement-medal {
     float: left;
     margin-right: 12px;
-    font-size: 42px;
+    width: 54px;
+    height: 54px;
+}
+
+.mf-achievement-svg,
+.mf-celebration-svg {
+    width: 100%;
+    height: 100%;
 }
 
 .mf-achievement strong,
@@ -2022,8 +2090,25 @@ tbody tr:hover td {
 
 .mf-pay-icon,
 .mf-celebration-icon {
-    font-size: clamp(56px, 12vw, 92px);
+    display: inline-grid;
+    place-items: center;
+    width: clamp(74px, 14vw, 118px);
+    height: clamp(74px, 14vw, 118px);
+    margin: 0 auto;
     animation: mf-pulse 1.6s ease-in-out infinite;
+}
+
+.mf-pay-svg,
+.mf-payment-option-svg,
+.mf-approved-svg,
+.mf-qr-svg,
+.mf-card-svg,
+.mf-machine-svg,
+.mf-money-svg,
+.mf-piggy-svg,
+.mf-rating-svg {
+    width: 100%;
+    height: 100%;
 }
 
 .mf-payment-card h2,
@@ -2069,7 +2154,8 @@ tbody tr:hover td {
 }
 
 .mf-payment-options span {
-    font-size: 54px;
+    width: 64px;
+    height: 64px;
 }
 
 .mf-qr {
@@ -2078,10 +2164,9 @@ tbody tr:hover td {
     margin: 20px auto;
     border: 14px solid #ffffff;
     border-radius: 28px;
-    background:
-        linear-gradient(90deg, var(--isis-plum) 18px, transparent 18px) 0 0 / 42px 42px,
-        linear-gradient(var(--isis-plum) 18px, transparent 18px) 0 0 / 42px 42px,
-        var(--isis-lilac);
+    display: grid;
+    place-items: center;
+    background: #ffffff;
     box-shadow: var(--isis-shadow);
     animation: mf-qr-pulse 1.4s ease-in-out infinite;
 }
@@ -2101,7 +2186,6 @@ tbody tr:hover td {
     border-radius: 50%;
     background: var(--isis-mint);
     color: #137a4f;
-    font-size: 82px;
     box-shadow: var(--isis-shadow);
     animation: mf-approved 560ms cubic-bezier(0.2, 1.6, 0.4, 1);
 }
@@ -2112,10 +2196,11 @@ tbody tr:hover td {
     justify-content: center;
     gap: 18px;
     min-height: 170px;
-    font-size: 64px;
 }
 
 .mf-card-emoji {
+    width: 96px;
+    height: 64px;
     animation: mf-card-slide 7s ease-in-out forwards;
 }
 
@@ -2134,19 +2219,19 @@ tbody tr:hover td {
     height: 130px;
     border-radius: 26px;
     background: linear-gradient(180deg, var(--isis-blue), #ffffff);
-    color: var(--isis-plum);
     box-shadow: var(--isis-small-shadow);
 }
 
 .mf-money-rain {
     position: relative;
     min-height: 210px;
-    font-size: 54px;
 }
 
 .mf-money-rain span {
     position: absolute;
     top: -10px;
+    width: 72px;
+    height: 48px;
     animation: mf-money-fall 1.1s ease-in forwards;
 }
 
@@ -2174,13 +2259,21 @@ tbody tr:hover td {
     left: 50%;
     bottom: 12px;
     transform: translateX(-50%);
-    font-size: 78px;
+    width: 92px;
+    height: 92px;
 }
 
 .mf-rating {
     margin-top: 12px;
-    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
     animation: mf-pulse 1.5s ease-in-out infinite;
+}
+
+.mf-rating-svg {
+    width: 34px;
+    height: 34px;
 }
 
 @keyframes mf-toast-in {
@@ -2385,7 +2478,11 @@ tbody tr:hover td {
     position: absolute;
     right: 18px;
     top: 16px;
-    content: "🔔";
+    content: "";
+    width: 36px;
+    height: 36px;
+    border-radius: 16px;
+    background: radial-gradient(circle at 40% 35%, #fff0a8 0 30%, #ff9f43 33% 62%, transparent 64%);
     font-size: 36px;
     opacity: 0.24;
     animation: mf-pulse 2s ease-in-out infinite;
@@ -2420,7 +2517,11 @@ tbody tr:hover td {
     position: absolute;
     right: 18px;
     bottom: 12px;
-    content: "💬";
+    content: "";
+    width: 28px;
+    height: 28px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--isis-blue), #ffffff);
     font-size: 28px;
     opacity: 0.26;
 }
@@ -2443,10 +2544,21 @@ tbody tr:hover td {
     animation: mf-character-sway 3.4s ease-in-out infinite, mf-character-breathe 2.4s ease-in-out infinite;
 }
 
+.mf-character-svg {
+    width: 106px;
+    height: 106px;
+    overflow: visible;
+}
+
 .mf-client-avatar-mini {
     width: 52px;
     height: 58px;
     animation-duration: 3s, 2.2s;
+}
+
+.mf-client-avatar-mini .mf-character-svg {
+    width: 58px;
+    height: 58px;
 }
 
 .mf-client-shadow {
@@ -2704,11 +2816,25 @@ tbody tr:hover td {
     height: 42px;
     border-radius: 17px;
     background: rgba(255, 255, 255, 0.78);
-    font-size: 24px;
+    overflow: hidden;
+}
+
+.mf-chat-face .mf-client-avatar,
+.mf-chat-face .mf-client-avatar-mini {
+    width: 42px;
+    height: 42px;
+}
+
+.mf-chat-face .mf-character-svg,
+.mf-chat-face-svg {
+    width: 42px;
+    height: 42px;
 }
 
 .mf-typing {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     width: fit-content;
     margin: 0 0 0 8px;
     padding: 8px 14px;
@@ -2718,6 +2844,11 @@ tbody tr:hover td {
     font-weight: 800;
     opacity: 0;
     animation: mf-typing 900ms ease-out var(--delay) forwards;
+}
+
+.mf-typing-svg {
+    width: 24px;
+    height: 24px;
 }
 
 .product-request {
@@ -2739,8 +2870,12 @@ tbody tr:hover td {
     border-radius: 22px;
     background: #ffffff;
     box-shadow: 0 5px 0 rgba(127, 79, 107, 0.12);
-    font-size: 30px;
     animation: mf-pulse 1.8s ease-in-out infinite;
+}
+
+.mf-product-svg {
+    width: 42px;
+    height: 42px;
 }
 
 @keyframes mf-character-breathe {
