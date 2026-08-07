@@ -5,11 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Atendimento | Mercadinho da Ísis{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=mercadinho-feliz-1">
 </head>
 <body class="attendance-mode">
     <main class="attendance-shell">
         {% block content %}{% endblock %}
     </main>
+    <div id="mercadinho-effects-root" aria-live="polite"></div>
+    <script src="{% static 'js/mercadinho-effects.js' %}?v=1" defer></script>
 </body>
 </html>

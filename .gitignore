@@ -14,6 +14,9 @@ env/
 db.sqlite3
 media/
 staticfiles/
+cloudflared*.log
+cloudflared.pid
+tools/
 
 # Environment variables
 .env

@@ -5,20 +5,20 @@
 {% block content %}
 <section class="page-header page-header-actions">
     <div>
-        <p class="eyebrow">Dashboard</p>
+        <p class="eyebrow">Painel do Mercadinho</p>
         <h1>Mercadinho da Ísis</h1>
-        <p>Estado atual do mercado.</p>
+        <p>Organize a loja, espere os clientes e cuide do cofrinho.</p>
     </div>
 
     {% if expediente.status == "aberto" %}
         <form method="post" action="{% url 'core:fechar_expediente' %}">
             {% csrf_token %}
-            <button class="button button-secondary" type="submit">Encerrar Expediente</button>
+            <button class="button button-secondary" type="submit">🌙 Fechar Mercado</button>
         </form>
     {% else %}
         <form method="post" action="{% url 'core:abrir_expediente' %}">
             {% csrf_token %}
-            <button class="button button-primary" type="submit">Iniciar Expediente</button>
+            <button class="button button-primary" type="submit">🏪 Abrir Mercado</button>
         </form>
     {% endif %}
 </section>
@@ -33,45 +33,49 @@
 
 <section class="dashboard-grid" aria-label="Estado atual do sistema">
     <article class="summary-card">
-        <span class="summary-label">Expediente</span>
+        <span class="sr-only">Expediente</span>
+        <span class="summary-label">Mercado</span>
         <strong>{{ expediente.get_status_display }}</strong>
     </article>
 
     <article class="summary-card">
-        <span class="summary-label">Caixa atual</span>
+        <span class="summary-label">Meu Cofrinho</span>
         <strong>R$ {{ caixa.saldo_atual }}</strong>
     </article>
 
     <article class="summary-card">
-        <span class="summary-label">Produtos ativos</span>
+        <span class="sr-only">Produtos ativos</span>
+        <span class="summary-label">Nossos Produtos</span>
         <strong>{{ produtos_ativos }}</strong>
     </article>
 
     <article class="summary-card">
-        <span class="summary-label">Produtos em estoque</span>
+        <span class="sr-only">Produtos em estoque</span>
+        <span class="summary-label">Na Prateleira</span>
         <strong>{{ total_estoque }}</strong>
     </article>
 
     <article class="summary-card">
-        <span class="summary-label">Clientes aguardando</span>
+        <span class="summary-label">Amigos na Fila</span>
         <strong>{{ clientes_aguardando }}</strong>
     </article>
 </section>
 
 <section class="dashboard-panels">
     <article class="dashboard-panel">
-        <h2>Ultima venda</h2>
+        <span class="sr-only">Ultima venda</span>
+        <h2>Última venda feliz</h2>
         {% if ultima_venda %}
             <p><strong>{{ ultima_venda.numero_venda }}</strong></p>
             <p>{{ ultima_venda.data|date:"d/m/Y H:i" }}</p>
             <p>R$ {{ ultima_venda.valor_total }}</p>
         {% else %}
-            <p class="panel-empty">Nenhuma venda concluida.</p>
+            <p class="panel-empty">Nenhuma venda concluída ainda.</p>
         {% endif %}
     </article>
 
     <article class="dashboard-panel">
-        <h2>Notificacoes</h2>
+        <h2>Recadinhos</h2>
         {% if notificacoes %}
             <ul class="notification-list">
                 {% for notificacao in notificacoes %}
@@ -79,12 +83,12 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p class="panel-empty">Nenhuma notificacao.</p>
+            <p class="panel-empty">Nenhum recadinho agora.</p>
         {% endif %}
     </article>
 
     <article class="dashboard-panel">
-        <h2>Eventos de clientes</h2>
+        <h2>Movimento do mercado</h2>
         {% if eventos_clientes %}
             <ul class="notification-list">
                 {% for evento in eventos_clientes %}
@@ -92,7 +96,7 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p class="panel-empty">Nenhum evento registrado.</p>
+            <p class="panel-empty">Nenhum movimento registrado.</p>
         {% endif %}
     </article>
 </section>

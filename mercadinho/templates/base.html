@@ -5,37 +5,40 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Mercadinho da Ísis{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=mercadinho-feliz-1">
 </head>
 <body>
     <header class="topbar">
         <div class="brand">
-            <span class="brand-mark" aria-hidden="true">MI</span>
+            <span class="brand-mark" aria-hidden="true">🛒</span>
             <div>
                 <strong>Mercadinho da Ísis</strong>
-                <span>Operacao do mercado</span>
+                <span>Hoje a dona do mercado está no comando</span>
             </div>
         </div>
         <div class="topbar-meta">
-            <span>Sistema inicial</span>
+            <span class="topbar-pill">🌈 Loja aberta para brincar</span>
             {% if request.user.is_authenticated %}
                 <span>{{ request.user.get_username }}</span>
             {% else %}
-                <a href="{% url 'admin:login' %}">Entrar</a>
+                <a href="{% url 'admin:login' %}">Entrar ✨</a>
             {% endif %}
         </div>
     </header>
 
     <div class="app-shell">
         <nav class="sidebar" aria-label="Menu principal">
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'core' %}active{% endif %}" href="{% url 'core:dashboard' %}"><span class="nav-icon" aria-hidden="true">D</span>Dashboard</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'produtos' %}active{% endif %}" href="{% url 'produtos:lista' %}"><span class="nav-icon" aria-hidden="true">P</span>Produtos</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'estoque' %}active{% endif %}" href="{% url 'estoque:lista' %}"><span class="nav-icon" aria-hidden="true">E</span>Estoque</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'caixa' %}active{% endif %}" href="{% url 'caixa:dashboard' %}"><span class="nav-icon" aria-hidden="true">C</span>Caixa</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'vendas' %}active{% endif %}" href="{% url 'vendas:lista' %}"><span class="nav-icon" aria-hidden="true">V</span>Vendas</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'clientes' %}active{% endif %}" href="{% url 'clientes:fluxo' %}"><span class="nav-icon" aria-hidden="true">A</span>Atendimento</a>
-            <a class="sidebar-link {% if request.resolver_match.namespace == 'relatorios' %}active{% endif %}" href="{% url 'relatorios:resumo' %}"><span class="nav-icon" aria-hidden="true">R</span>Relatorios</a>
-            <span class="sidebar-link disabled"><span class="nav-icon" aria-hidden="true">S</span>Configuracoes</span>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'core' %}active{% endif %}" href="{% url 'core:dashboard' %}"><span class="nav-icon" aria-hidden="true">🏠</span>Início</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'produtos' %}active{% endif %}" href="{% url 'produtos:lista' %}"><span class="nav-icon" aria-hidden="true">🧺</span>Produtos</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'estoque' %}active{% endif %}" href="{% url 'estoque:lista' %}"><span class="nav-icon" aria-hidden="true">📦</span>Estoque</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'caixa' %}active{% endif %}" href="{% url 'caixa:dashboard' %}"><span class="nav-icon" aria-hidden="true">💰</span>Cofrinho</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'vendas' %}active{% endif %}" href="{% url 'vendas:lista' %}"><span class="nav-icon" aria-hidden="true">🧾</span>Vendas</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'clientes' %}active{% endif %}" href="{% url 'clientes:fluxo' %}"><span class="nav-icon" aria-hidden="true">😊</span>Atendimento</a>
+            <a class="sidebar-link {% if request.resolver_match.namespace == 'relatorios' %}active{% endif %}" href="{% url 'relatorios:resumo' %}"><span class="nav-icon" aria-hidden="true">⭐</span>Relatórios</a>
+            <span class="sidebar-link disabled"><span class="nav-icon" aria-hidden="true">🎀</span>Configurações</span>
         </nav>
 
         <main class="content">
@@ -44,7 +47,9 @@
     </div>
 
     <footer class="statusbar">
-        <span>Etapa 12: interface</span>
+        <span>💖 Feito para brincar de mercadinho de verdade</span>
     </footer>
+    <div id="mercadinho-effects-root" aria-live="polite"></div>
+    <script src="{% static 'js/mercadinho-effects.js' %}?v=1" defer></script>
 </body>
 </html>

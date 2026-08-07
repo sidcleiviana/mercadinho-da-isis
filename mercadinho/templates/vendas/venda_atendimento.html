@@ -130,9 +130,9 @@
         <span>Total</span>
         <strong>R$ {{ venda.valor_total }}</strong>
         {% if venda.status == "em_andamento" %}
-            <form method="post" action="{% url 'vendas:finalizar' venda.pk %}">
+            <form method="post" action="{% url 'vendas:finalizar' venda.pk %}" data-payment-form data-sale-total="{{ venda.valor_total }}">
                 {% csrf_token %}
-                <button class="button button-primary" type="submit">Finalizar Venda</button>
+                <button class="button button-primary" type="submit">🎉 Finalizar Venda</button>
             </form>
             <form method="post" action="{% url 'vendas:cancelar' venda.pk %}">
                 {% csrf_token %}
