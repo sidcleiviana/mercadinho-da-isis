@@ -1918,6 +1918,31 @@ tbody tr:hover td {
     gap: 4px;
 }
 
+.system-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 4px 10px 4px 5px;
+    border: 2px solid rgba(255, 255, 255, 0.88);
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 194, 226, 0.42));
+    color: var(--isis-plum);
+    box-shadow: 0 5px 0 rgba(127, 79, 107, 0.12), 0 12px 22px rgba(127, 79, 107, 0.1);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.system-user img {
+    display: block;
+    width: 34px;
+    height: 34px;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(127, 79, 107, 0.18);
+}
+
 .sr-only {
     position: absolute;
     width: 1px;

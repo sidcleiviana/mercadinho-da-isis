@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=mercadinho-feliz-5">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=mercadinho-feliz-6">
 </head>
 <body>
     <header class="topbar">
@@ -21,6 +21,10 @@
         </div>
         <div class="topbar-meta">
             <span class="topbar-pill"><svg class="mf-svg mf-text-icon"><use href="{% static 'img/mercadinho-feliz.svg' %}#sparkle"></use></svg>Loja aberta para brincar</span>
+            <span class="system-user" title="Usuária do sistema">
+                <img src="{% static 'img/isis.jpeg' %}" alt="Ísis, usuária do sistema">
+                <span>Ísis</span>
+            </span>
             {% if request.user.is_authenticated %}
                 <span>{{ request.user.get_username }}</span>
             {% else %}
@@ -51,6 +55,6 @@
     </footer>
     <div id="mercadinho-effects-root" aria-live="polite"></div>
     <script src="{% static 'js/mercadinho-illustrations.js' %}?v=1" data-sprite="{% static 'img/mercadinho-feliz.svg' %}" defer></script>
-    <script src="{% static 'js/mercadinho-effects.js' %}?v=5" defer></script>
+    <script src="{% static 'js/mercadinho-effects.js' %}?v=6" defer></script>
 </body>
 </html>

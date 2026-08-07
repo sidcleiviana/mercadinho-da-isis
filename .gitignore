@@ -17,6 +17,7 @@ staticfiles/
 cloudflared*.log
 cloudflared.pid
 tools/
+/isis.jpeg
 
 # Environment variables
 .env
